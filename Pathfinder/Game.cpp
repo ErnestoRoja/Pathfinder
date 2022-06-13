@@ -16,6 +16,8 @@ void Game::initNodes()
 			nodes.push_back(new Node(x, y));
 		}
 	}
+	//Start = &nodes[0][0];
+	//End = &nodes[rows_Y - 1][columns_X - 1];
 }
 
 
@@ -55,7 +57,6 @@ void Game::updateMousePositions()
 void Game::update()
 {
 	this->updateMousePositions();
-	this->updateNodes();
 }
 
 void Game::updateNodes()
@@ -73,6 +74,53 @@ void Game::updatePollEvents()
 	{
 		if (ev.Event::type == sf::Event::Closed || ev.Event::KeyPressed && ev.Event::key.code == sf::Keyboard::Escape)
 			this->window->close();
+
+		bool lockLeftClick = false;
+		bool lockRightClick = false;
+		bool lockSpacebar = false;
+		if (ev.type == sf::Event::MouseButtonPressed)
+		{
+			if (ev.mouseButton.button == sf::Mouse::Left && lockLeftClick != true)
+			{
+				this->updateNodes();
+				lockLeftClick = true;
+			}
+
+			if (ev.mouseButton.button == sf::Mouse::Right && lockRightClick != true)
+			{
+				this->updateNodes();
+				lockRightClick = true;
+			}
+		}
+
+		if (ev.type == sf::Event::KeyPressed)
+		{
+			if (ev.key.code == sf::Keyboard::Space && lockSpacebar != true)
+			{
+				this->updateNodes();
+				lockSpacebar = true;
+			}
+		}
+
+		if (ev.type == sf::Event::MouseButtonReleased)
+		{
+			if (ev.mouseButton.button == sf::Mouse::Left)
+			{
+				lockLeftClick = false;
+			}
+			else if (ev.mouseButton.button == sf::Mouse::Right)
+			{
+				lockRightClick = false;
+			}
+		}
+
+		if (ev.type == sf::Event::KeyReleased)
+		{
+			if (ev.key.code == sf::Keyboard::Space)
+			{
+				lockSpacebar = false;
+			}
+		}
 	}
 }
 

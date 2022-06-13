@@ -47,42 +47,71 @@ const bool Node::isPressed() const
 	return false;
 }
 
+void Node::resetNodes()
+{
+	
+}
+
 void Node::update(const sf::Vector2f mousePos)
 {
-	if (this->node.getGlobalBounds().contains(mousePos))
+	
+	if ((CURRENT_LEFT_ACTIVE < 1))
 	{
-		// Left-clicked
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		if (this->node.getGlobalBounds().contains(mousePos))
 		{
-			this->nodeState = NODE_ACTIVE_LEFT;
-				
-		}
-		// Right-clicked
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-		{
-			this->nodeState = NODE_ACTIVE_RIGHT;
+			// Left-clicked
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				this->nodeState = NODE_ACTIVE_LEFT;
+				this->setStart = true;
+				CURRENT_LEFT_ACTIVE++;
+				std::cout << "Left active: " << CURRENT_LEFT_ACTIVE << std::endl;
+			}
 		}
 	}
-	else
+
+	if ((CURRENT_RIGHT_ACTIVE < 1))
+	{
+		if (this->node.getGlobalBounds().contains(mousePos))
+		{
+			// Right-clicked
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+			{
+				this->nodeState = NODE_ACTIVE_RIGHT;
+				this->setEnd = true;
+				CURRENT_RIGHT_ACTIVE++;
+				std::cout << "Right active: " << CURRENT_RIGHT_ACTIVE << std::endl;
+			}
+		}
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
 		this->nodeState = NODE_IDLE;
+		CURRENT_LEFT_ACTIVE = 0;
+		CURRENT_RIGHT_ACTIVE = 0;
+		std::cout << "Left active reset: " << CURRENT_LEFT_ACTIVE << std::endl;
+		std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
 	}
+
+		switch (this->nodeState)
+		{
+		case NODE_IDLE:
+			this->node.setFillColor(this->idleColor);
+			break;
+		case NODE_ACTIVE_LEFT:
+			this->node.setFillColor(this->activeColorLeft);
+			break;
+		case NODE_ACTIVE_RIGHT:
+			this->node.setFillColor(this->activeColorRight);
+			break;
+		default:
+			this->node.setFillColor(sf::Color::Cyan);
+			break;
+		}
 	
-	switch (this->nodeState)
-	{
-	case NODE_IDLE:
-		this->node.setFillColor(this->idleColor);
-		break;
-	case NODE_ACTIVE_LEFT:
-		this->node.setFillColor(this->activeColorLeft);
-		break;
-	case NODE_ACTIVE_RIGHT:
-		this->node.setFillColor(this->activeColorRight);
-		break;
-	default:
-		this->node.setFillColor(sf::Color::Cyan);
-		break;
-	}
+
+	
 }
 
 void Node::render(sf::RenderTarget* target)

@@ -5,11 +5,19 @@
 #include <iostream>
 
 enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT};
+const unsigned int MAX_LEFT_ACTIVE = 1;
+const unsigned int MAX_RIGHT_ACTIVE = 1;
+static int CURRENT_LEFT_ACTIVE = 0;
+static int CURRENT_RIGHT_ACTIVE = 0;
 
 class Node
 {
 private:
 	short unsigned nodeState;
+	
+
+	bool setStart;
+	bool setEnd;
 
 	bool isWall;
 	bool isVisited;
@@ -42,6 +50,7 @@ public:
 	const bool isPressed() const;
 
 	// Modifiers
+	void resetNodes();
 
 	// Public functions
 	void update(const sf::Vector2f mousePos);
