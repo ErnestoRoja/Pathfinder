@@ -15,7 +15,6 @@ class Node
 private:
 	short unsigned nodeState;
 	
-
 	bool setStart;
 	bool setEnd;
 

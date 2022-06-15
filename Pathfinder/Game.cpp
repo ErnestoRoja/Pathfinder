@@ -92,7 +92,6 @@ void Game::updatePollEvents()
 				lockRightClick = true;
 			}
 		}
-
 		if (ev.type == sf::Event::KeyPressed)
 		{
 			if (ev.key.code == sf::Keyboard::Space && lockSpacebar != true)
@@ -101,7 +100,13 @@ void Game::updatePollEvents()
 				lockSpacebar = true;
 			}
 		}
-
+		if (ev.type == sf::Event::KeyReleased)
+		{
+			if (ev.key.code == sf::Keyboard::Space)
+			{
+				lockSpacebar = false;
+			}
+		}
 		if (ev.type == sf::Event::MouseButtonReleased)
 		{
 			if (ev.mouseButton.button == sf::Mouse::Left)
@@ -111,14 +116,6 @@ void Game::updatePollEvents()
 			else if (ev.mouseButton.button == sf::Mouse::Right)
 			{
 				lockRightClick = false;
-			}
-		}
-
-		if (ev.type == sf::Event::KeyReleased)
-		{
-			if (ev.key.code == sf::Keyboard::Space)
-			{
-				lockSpacebar = false;
 			}
 		}
 	}

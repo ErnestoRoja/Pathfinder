@@ -54,7 +54,21 @@ void Node::resetNodes()
 
 void Node::update(const sf::Vector2f mousePos)
 {
-	
+	if (this->node.getGlobalBounds().contains(mousePos))
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_LEFT)
+		{
+			this->nodeState = NODE_IDLE;
+			CURRENT_LEFT_ACTIVE = 0;
+			std::cout << "Left active reset: " << CURRENT_LEFT_ACTIVE << std::endl;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_RIGHT)
+		{
+			this->nodeState = NODE_IDLE;
+			CURRENT_RIGHT_ACTIVE = 0;
+			std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
+		}
+	}
 	if ((CURRENT_LEFT_ACTIVE < 1))
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
@@ -85,33 +99,21 @@ void Node::update(const sf::Vector2f mousePos)
 		}
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	switch (this->nodeState)
 	{
-		this->nodeState = NODE_IDLE;
-		CURRENT_LEFT_ACTIVE = 0;
-		CURRENT_RIGHT_ACTIVE = 0;
-		std::cout << "Left active reset: " << CURRENT_LEFT_ACTIVE << std::endl;
-		std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
+	case NODE_IDLE:
+		this->node.setFillColor(this->idleColor);
+		break;
+	case NODE_ACTIVE_LEFT:
+		this->node.setFillColor(this->activeColorLeft);
+		break;
+	case NODE_ACTIVE_RIGHT:
+		this->node.setFillColor(this->activeColorRight);
+		break;
+	default:
+		this->node.setFillColor(sf::Color::Cyan);
+		break;
 	}
-
-		switch (this->nodeState)
-		{
-		case NODE_IDLE:
-			this->node.setFillColor(this->idleColor);
-			break;
-		case NODE_ACTIVE_LEFT:
-			this->node.setFillColor(this->activeColorLeft);
-			break;
-		case NODE_ACTIVE_RIGHT:
-			this->node.setFillColor(this->activeColorRight);
-			break;
-		default:
-			this->node.setFillColor(sf::Color::Cyan);
-			break;
-		}
-	
-
-	
 }
 
 void Node::render(sf::RenderTarget* target)
