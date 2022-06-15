@@ -38,6 +38,16 @@ const sf::FloatRect Node::getBounds() const
 	return this->node.getGlobalBounds();
 }
 
+const float Node::getPosX() const
+{
+	return this->node.getPosition().x;
+}
+
+const float Node::getPosY() const
+{
+	return this->node.getPosition().y;
+}
+
 const bool Node::isPressed() const
 {
 	if (this->nodeState == NODE_ACTIVE_LEFT || this->nodeState == NODE_ACTIVE_RIGHT)
@@ -47,16 +57,18 @@ const bool Node::isPressed() const
 	return false;
 }
 
-void Node::resetNodes()
-{
-	
-}
-
-void Node::update(const sf::Vector2f mousePos)
+void Node::resetNodes(const sf::Vector2f mousePos)
 {
 	if (this->node.getGlobalBounds().contains(mousePos))
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_LEFT)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->setStart == true && this->setEnd == true)
+		{
+			this->nodeState = NODE_IDLE;
+			CURRENT_RIGHT_ACTIVE = 0;
+			CURRENT_LEFT_ACTIVE = 0;
+			std::cout << "Both Reset" << CURRENT_RIGHT_ACTIVE << std::endl;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_LEFT)
 		{
 			this->nodeState = NODE_IDLE;
 			CURRENT_LEFT_ACTIVE = 0;
@@ -69,6 +81,10 @@ void Node::update(const sf::Vector2f mousePos)
 			std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
 		}
 	}
+}
+
+void Node::updateNodes(const sf::Vector2f mousePos)
+{
 	if ((CURRENT_LEFT_ACTIVE < 1))
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
@@ -83,7 +99,6 @@ void Node::update(const sf::Vector2f mousePos)
 			}
 		}
 	}
-
 	if ((CURRENT_RIGHT_ACTIVE < 1))
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
@@ -98,7 +113,10 @@ void Node::update(const sf::Vector2f mousePos)
 			}
 		}
 	}
+}
 
+void Node::assignFillColor()
+{
 	switch (this->nodeState)
 	{
 	case NODE_IDLE:
@@ -114,6 +132,13 @@ void Node::update(const sf::Vector2f mousePos)
 		this->node.setFillColor(sf::Color::Cyan);
 		break;
 	}
+}
+
+void Node::update(const sf::Vector2f mousePos)
+{
+	this->resetNodes(mousePos);
+	this->updateNodes(mousePos);
+	this->assignFillColor();
 }
 
 void Node::render(sf::RenderTarget* target)

@@ -43,13 +43,18 @@ public:
 
 	// Public variables
 	const sf::Vector2f nodeSize = { 50, 50 };
+	std::vector<Node*> neighbors;
 
 	// Accessors
 	const sf::FloatRect getBounds() const;
+	const float getPosX() const;
+	const float getPosY() const;
 	const bool isPressed() const;
 
 	// Modifiers
-	void resetNodes();
+	void resetNodes(const sf::Vector2f mousePos);
+	void updateNodes(const sf::Vector2f mousePos);
+	void assignFillColor();
 
 	// Public functions
 	void update(const sf::Vector2f mousePos);

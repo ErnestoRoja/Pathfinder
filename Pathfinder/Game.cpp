@@ -9,17 +9,35 @@ void Game::initWindow()
 
 void Game::initNodes()
 {
-	for (unsigned int y = 0; y < rows_Y; ++y)
+	for (unsigned int y = 0; y < rows_Y; y++)
 	{
-		for (unsigned int x = 0; x < columns_X; ++x)
+		for (unsigned int x = 0; x < columns_X; x++)
 		{
 			nodes.push_back(new Node(x, y));
 		}
 	}
+	initNeighbors();
 	//Start = &nodes[0][0];
 	//End = &nodes[rows_Y - 1][columns_X - 1];
 }
 
+void Game::initNeighbors()
+{
+	for (unsigned int y = 0; y < rows_Y; y++)
+	{
+		for (unsigned int x = 0; x < columns_X; x++)
+		{
+			if (x > 0)
+				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x - 1) * rows_Y + (y + 0)]);
+			if (x < columns_X - 1)
+				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 1) * rows_Y + (y + 0)]);
+			if (y > 0)
+				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 0) * rows_Y + (y - 1)]);
+			if (y < rows_Y - 1)
+				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 0) * rows_Y + (y + 1)]);
+		}
+	}
+}
 
 Game::Game()
 {

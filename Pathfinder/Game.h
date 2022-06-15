@@ -24,8 +24,8 @@ private:
 	// Private functions
 	void initWindow();
 	void initNodes();
+	void initNeighbors();
 	
-
 public:
 	Game();
 	virtual ~Game();
