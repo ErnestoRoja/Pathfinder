@@ -4,11 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT};
+enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT};
 const unsigned int MAX_LEFT_ACTIVE = 1;
 const unsigned int MAX_RIGHT_ACTIVE = 1;
 static int CURRENT_LEFT_ACTIVE = 0;
 static int CURRENT_RIGHT_ACTIVE = 0;
+static int CURRENT_WALL_ACTIVE = 0;
 
 class Node
 {
@@ -32,6 +33,7 @@ private:
 	sf::Color idleColor = sf::Color::White;
 	sf::Color activeColorLeft = sf::Color::Green;
 	sf::Color activeColorRight = sf::Color::Red;
+	sf::Color wallColor = sf::Color::Blue;
 
 	// Private functions
 	

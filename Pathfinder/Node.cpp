@@ -80,17 +80,35 @@ void Node::resetNodes(const sf::Vector2f mousePos)
 			CURRENT_RIGHT_ACTIVE = 0;
 			std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_SHIFT)
+		{
+			this->nodeState = NODE_IDLE;
+			CURRENT_WALL_ACTIVE--;
+			std::cout << "Wall count: " << CURRENT_WALL_ACTIVE << std::endl;
+		}
 	}
 }
 
 void Node::updateNodes(const sf::Vector2f mousePos)
 {
+	if (this->node.getGlobalBounds().contains(mousePos))
+	{
+		// Shift Left-clicked (sets a wall)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			this->isWall = true;
+			this->nodeState = NODE_ACTIVE_SHIFT;
+			CURRENT_WALL_ACTIVE++;
+			std::cout << "Wall Count: " << CURRENT_WALL_ACTIVE << std::endl;
+			
+		}
+	}
 	if ((CURRENT_LEFT_ACTIVE < 1))
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
 		{
-			// Left-clicked
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			// Left-clicked (sets the start point)
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->isWall == false)
 			{
 				this->nodeState = NODE_ACTIVE_LEFT;
 				this->setStart = true;
@@ -103,8 +121,8 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
 		{
-			// Right-clicked
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+			// Right-clicked (sets the end point)
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->isWall == false)
 			{
 				this->nodeState = NODE_ACTIVE_RIGHT;
 				this->setEnd = true;
@@ -127,6 +145,9 @@ void Node::assignFillColor()
 		break;
 	case NODE_ACTIVE_RIGHT:
 		this->node.setFillColor(this->activeColorRight);
+		break;
+	case NODE_ACTIVE_SHIFT:
+		this->node.setFillColor(this->wallColor);
 		break;
 	default:
 		this->node.setFillColor(sf::Color::Cyan);

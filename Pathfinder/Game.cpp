@@ -17,8 +17,8 @@ void Game::initNodes()
 		}
 	}
 	initNeighbors();
-	//Start = &nodes[0][0];
-	//End = &nodes[rows_Y - 1][columns_X - 1];
+	Start = &nodes[0][0];
+	End = &nodes[rows_Y - 1][columns_X - 1];
 }
 
 void Game::initNeighbors()

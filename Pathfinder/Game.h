@@ -10,8 +10,8 @@ private:
 	// Resources
 	std::vector<Node*> nodes;
 	sf::RectangleShape s;
-	Node* start;
-	Node* end;
+	Node* Start;
+	Node* End;
 
 	// Variables
 	const float screenWidth = 1800.0f;
