@@ -3,8 +3,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <math.h>
 
-enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT};
+enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT, NODE_ACTIVE_PATH};
 const unsigned int MAX_LEFT_ACTIVE = 1;
 const unsigned int MAX_RIGHT_ACTIVE = 1;
 static int CURRENT_LEFT_ACTIVE = 0;
@@ -19,13 +20,6 @@ private:
 	bool setStart;
 	bool setEnd;
 
-	bool isWall;
-	bool isVisited;
-	float fCost;
-	float hCost;
-	int x;
-	int y;
-
 	// Resources
 	sf::RectangleShape node;
 
@@ -34,10 +28,10 @@ private:
 	sf::Color activeColorLeft = sf::Color::Green;
 	sf::Color activeColorRight = sf::Color::Red;
 	sf::Color wallColor = sf::Color::Blue;
+	sf::Color pathColor = sf::Color::Cyan;
 
 	// Private functions
 	
-
 public:
 	Node();
 	Node(float x, float y);
@@ -46,17 +40,28 @@ public:
 	// Public variables
 	const sf::Vector2f nodeSize = { 50, 50 };
 	std::vector<Node*> neighbors;
+	Node* parent;
+	bool isWall;
+	bool isVisited;
+	float fCost;
+	float hCost;
+	int x;
+	int y;
+	bool needsUpdate;
+	bool startAlgo;
 
 	// Accessors
 	const sf::FloatRect getBounds() const;
-	const float getPosX() const;
-	const float getPosY() const;
 	const bool isPressed() const;
+	bool needsToBeUpdated();
+	bool isStart();
+	bool isEnd();
 
 	// Modifiers
 	void resetNodes(const sf::Vector2f mousePos);
 	void updateNodes(const sf::Vector2f mousePos);
 	void assignFillColor();
+	void colorPath();
 
 	// Public functions
 	void update(const sf::Vector2f mousePos);

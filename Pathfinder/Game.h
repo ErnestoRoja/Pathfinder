@@ -37,6 +37,7 @@ public:
 	void update();
 	void updateNodes();
 	void updatePollEvents();
+	void updateAStarAlg();
 
 	void render();
 };
