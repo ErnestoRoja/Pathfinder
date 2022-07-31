@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 #include <math.h>
 
 enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT, NODE_ACTIVE_PATH};
@@ -15,8 +16,7 @@ static int CURRENT_WALL_ACTIVE = 0;
 class Node
 {
 private:
-	short unsigned nodeState;
-	
+
 	bool setStart;
 	bool setEnd;
 
@@ -49,17 +49,20 @@ public:
 	int y;
 	bool needsUpdate;
 	bool startAlgo;
+	short unsigned nodeState;
 
 	// Accessors
 	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
 	bool needsToBeUpdated();
+	bool checkVisited();
 	bool isStart();
 	bool isEnd();
 
 	// Modifiers
 	void resetNodes(const sf::Vector2f mousePos);
 	void updateNodes(const sf::Vector2f mousePos);
+	void completeReset();
 	void assignFillColor();
 	void colorPath();
 

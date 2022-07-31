@@ -16,38 +16,22 @@ void Game::initNodes()
 			nodes.push_back(new Node(x, y));
 		}
 	}
-	initNeighbors();
-
-	/*for (auto* i : this->nodes)
-	{
-		if (i->isStart() == true)
-		{
-			Start = i;
-		}
-		else if (i->isEnd() == true)
-		{
-			End = i;
-		}
-	}*/
-
-	Start = &nodes[0][0];
-	End = &nodes[rows_Y - 1][columns_X - 1];
 }
 
 void Game::initNeighbors()
 {
-	for (unsigned int y = 0; y < rows_Y; y++)
+	for (unsigned int x = 0; x < columns_X; x++)
 	{
-		for (unsigned int x = 0; x < columns_X; x++)
+		for (unsigned int y = 0; y < rows_Y; y++)
 		{
-			if (x > 0)
-				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x - 1) * rows_Y + (y + 0)]);
-			if (x < columns_X - 1)
-				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 1) * rows_Y + (y + 0)]);
 			if (y > 0)
-				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 0) * rows_Y + (y - 1)]);
+				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y - 1) * columns_X + (x + 0)]);
 			if (y < rows_Y - 1)
-				nodes[x * rows_Y + y]->neighbors.push_back(nodes[(x + 0) * rows_Y + (y + 1)]);
+				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 1) * columns_X + (x + 0)]);
+			if (x > 0)
+				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 0) * columns_X + (x - 1)]);
+			if (x < columns_X - 1)
+				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 0) * columns_X + (x + 1)]);
 		}
 	}
 }
@@ -56,6 +40,7 @@ Game::Game()
 {
 	this->initWindow();
 	this->initNodes();
+	this->initNeighbors();
 }
 
 Game::~Game()
@@ -90,19 +75,53 @@ void Game::update()
 	this->updateMousePositions();
 }
 
-void Game::updateNodes()
+void Game::updateNodeLocation()
 {
 	for (auto* i : this->nodes)
 	{
-		i->update((sf::Vector2f)this->mousePosWindow);
+		if (i->isStart() == true)
+			startingNode = i;
+		else if (i->isEnd() == true)
+			endingNode = i;
+	}
+}
 
-		/*if (i->needsUpdate == true)
+void Game::updateNodes(char key)
+{
+	switch (key)
+	{
+	case 'A':
+		this->updateBFS();
+		break;
+	case 'L':
+		if (algActive == false)
 		{
-			updateAStarAlg();
-			std::cout << "Algo is updated" << std::endl;
-			i->needsUpdate == false;
-		}*/
-
+			for (auto* i : this->nodes)
+			{
+				i->update((sf::Vector2f)this->mousePosWindow);
+			}
+		}
+		break;
+	case 'R':
+		if (algActive == false)
+		{
+			for (auto* i : this->nodes)
+			{
+				i->update((sf::Vector2f)this->mousePosWindow);
+				
+			}
+		}
+		break;
+	case 'S':
+		if (algActive == true)
+		{
+			for (auto* i : this->nodes)
+			{
+				i->completeReset();
+			}
+			algActive = false;
+		}
+		break;
 	}
 }
 
@@ -117,17 +136,18 @@ void Game::updatePollEvents()
 		bool lockLeftClick = false;
 		bool lockRightClick = false;
 		bool lockSpacebar = false;
+		bool lockA = false;
 		if (ev.type == sf::Event::MouseButtonPressed)
 		{
 			if (ev.mouseButton.button == sf::Mouse::Left && lockLeftClick != true)
 			{
-				this->updateNodes();
+				this->updateNodes('L');
 				lockLeftClick = true;
 			}
 
 			if (ev.mouseButton.button == sf::Mouse::Right && lockRightClick != true)
 			{
-				this->updateNodes();
+				this->updateNodes('R');
 				lockRightClick = true;
 			}
 		}
@@ -135,8 +155,14 @@ void Game::updatePollEvents()
 		{
 			if (ev.key.code == sf::Keyboard::Space && lockSpacebar != true)
 			{
-				this->updateNodes();
+				this->updateNodes('S');
 				lockSpacebar = true;
+			}
+			if (ev.key.code == sf::Keyboard::A && lockA != true)
+			{
+				std::cout << "A pressed" << std::endl;
+				this->updateNodes('A');
+				lockA = true;
 			}
 		}
 		if (ev.type == sf::Event::KeyReleased)
@@ -144,6 +170,10 @@ void Game::updatePollEvents()
 			if (ev.key.code == sf::Keyboard::Space)
 			{
 				lockSpacebar = false;
+			}
+			if (ev.key.code == sf::Keyboard::A)
+			{
+				lockA = false;
 			}
 		}
 		if (ev.type == sf::Event::MouseButtonReleased)
@@ -162,66 +192,40 @@ void Game::updatePollEvents()
 
 void Game::updateAStarAlg()
 {
-	/*for (unsigned int y = 0; y < rows_Y; y++)
+	
+}
+
+void Game::updateBFS()
+{
+	this->updateNodeLocation();
+
+	Node* srcNode = startingNode;
+	nodeQueue.emplace_back(srcNode);
+	srcNode->isVisited = true;
+
+	while (!nodeQueue.empty() && (endingNode->checkVisited() == false))
 	{
-		for (unsigned int x = 0; x < columns_X; x++)
-		{
-			nodes[y][x].isVisited = false;
-			nodes[y][x].fCost = INFINITY;
-			nodes[y][x].hCost = INFINITY;
-		    nodes[y][x].parent = nullptr;
-		}
-	}*/
-	for (auto* i : this->nodes)
-	{
-		i->isVisited = false;
-		i->fCost = INFINITY;
-		i->hCost = INFINITY;
-		i->parent = nullptr;
-	}
-
-	auto getDist = [](Node* P1, Node* P2)
-	{
-		return sqrt(pow(P2->x - P1->x, 2) + pow(P2->y - P1->y, 2));
-	};
-
-	Node* currentNode = Start;
-	Start->hCost = 0.0f;
-	Start->fCost = getDist(Start, End);
-
-	std::vector<Node*> nodesToTest;
-	nodesToTest.push_back(Start);
-
-	while (!nodesToTest.empty() && currentNode != End)
-	{
-		std::sort(nodesToTest.begin(), nodesToTest.end(), [](const Node* a, const Node* b) { return a->fCost < b->fCost; });
-			
-		while (!nodesToTest.empty() && nodesToTest.front()->isVisited)
-			nodesToTest.erase(nodesToTest.begin());
-			
-		if (nodesToTest.empty())
-			break;
-
-		currentNode = nodesToTest.front();
-		currentNode->isVisited = true;
+		Node* currentNode = nodeQueue.front();
+		nodeQueue.pop_front();
 		currentNode->colorPath();
 
-		for (auto nodeNeighbor : currentNode->neighbors)
+		for (auto* neighbor : currentNode->neighbors)
 		{
-			if (!nodeNeighbor->isVisited && !nodeNeighbor->isWall)
-				nodesToTest.push_back(nodeNeighbor);
-
-			auto bestNode = currentNode->hCost + getDist(currentNode, nodeNeighbor);
-			
-			if (bestNode < nodeNeighbor->hCost)
+			if (neighbor->isVisited == false)
 			{
-				nodeNeighbor->parent = currentNode;
-				nodeNeighbor->hCost = bestNode;
-
-				nodeNeighbor->fCost = nodeNeighbor->hCost + getDist(nodeNeighbor, End);
+				if (neighbor->isWall == false)
+				{
+					neighbor->parent = currentNode;
+					nodeQueue.emplace_back(neighbor);
+					neighbor->isVisited = true;
+					neighbor->colorPath();
+				}
 			}
 		}
 	}
+	nodeQueue.clear();
+	algActive = true;
+	std::cout << "BFS updated" << std::endl;
 }
 
 void Game::render()
