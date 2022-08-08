@@ -55,16 +55,18 @@ public:
 	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
 	bool needsToBeUpdated();
-	bool checkVisited();
-	bool isStart();
-	bool isEnd();
+	const bool checkVisited() const;
+	const bool isStart() const;
+	const bool isEnd() const;
+	const bool checkActive() const;
 
 	// Modifiers
 	void resetNodes(const sf::Vector2f mousePos);
 	void updateNodes(const sf::Vector2f mousePos);
 	void completeReset();
 	void assignFillColor();
-	void colorPath();
+	void colorVisitedNode();
+	void colorPathNode();
 
 	// Public functions
 	void update(const sf::Vector2f mousePos);

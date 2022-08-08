@@ -54,19 +54,27 @@ bool Node::needsToBeUpdated()
 	return this->needsUpdate;
 }
 
-bool Node::checkVisited()
+const bool Node::checkVisited() const
 {
 	return this->isVisited;
 }
 
-bool Node::isStart()
+const bool Node::isStart() const
 {
 	return this->setStart;
 }
 
-bool Node::isEnd()
+const bool Node::isEnd() const
 {
 	return this->setEnd;
+}
+
+const bool Node::checkActive() const
+{
+	if (CURRENT_LEFT_ACTIVE == 1 && CURRENT_RIGHT_ACTIVE == 1)
+		return true;
+
+	return false;
 }
 
 void Node::resetNodes(const sf::Vector2f mousePos)
@@ -181,14 +189,22 @@ void Node::assignFillColor()
 	}
 }
 
-void Node::colorPath()
+void Node::colorVisitedNode()
 {
 	if (this->isStart() == true)
-		this->node.setFillColor(sf::Color::Yellow);
+		this->node.setFillColor(sf::Color::Green);
 	else if (this->isEnd() == true)
-		this->node.setFillColor(sf::Color::Black);
+		this->node.setFillColor(sf::Color::Red);
 	else
 		this->node.setFillColor(sf::Color::Cyan);
+}
+
+void Node::colorPathNode()
+{
+	if (this->isEnd() == true)
+		this->node.setFillColor(sf::Color::Red);
+	else 
+		this->node.setFillColor(sf::Color::Black);
 }
 
 void Node::update(const sf::Vector2f mousePos)

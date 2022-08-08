@@ -90,10 +90,19 @@ void Game::updateNodes(char key)
 {
 	switch (key)
 	{
-	case 'A':
-		this->updateBFS();
+	case 'A':  // Num1 (BFS)
+		if (checkActive() == true)
+		{
+			this->updateBFS();
+		}
 		break;
-	case 'L':
+	case 'B':  // Num2 (DFS)
+		if (checkActive() == true)
+		{
+			//this->updateAStarAlg();
+		}
+		break;
+	case 'L':   // Left Clicked
 		if (algActive == false)
 		{
 			for (auto* i : this->nodes)
@@ -102,17 +111,27 @@ void Game::updateNodes(char key)
 			}
 		}
 		break;
-	case 'R':
+	case 'R':   // Right Clicked
 		if (algActive == false)
 		{
 			for (auto* i : this->nodes)
 			{
 				i->update((sf::Vector2f)this->mousePosWindow);
-				
+
 			}
 		}
 		break;
-	case 'S':
+	case 'S':    // Spacebar
+		if (algActive == false)
+		{
+			for (auto* i : this->nodes)
+			{
+				i->update((sf::Vector2f)this->mousePosWindow);
+
+			}
+		}
+		break;
+	case 'M':    // M key (complete rest)
 		if (algActive == true)
 		{
 			for (auto* i : this->nodes)
@@ -121,6 +140,9 @@ void Game::updateNodes(char key)
 			}
 			algActive = false;
 		}
+		break;
+	default:
+		std::cout << "switch default" << std::endl;
 		break;
 	}
 }
@@ -136,7 +158,9 @@ void Game::updatePollEvents()
 		bool lockLeftClick = false;
 		bool lockRightClick = false;
 		bool lockSpacebar = false;
-		bool lockA = false;
+		bool lockM = false;
+		bool lockNum1 = false;
+		bool lockNum2 = false;
 		if (ev.type == sf::Event::MouseButtonPressed)
 		{
 			if (ev.mouseButton.button == sf::Mouse::Left && lockLeftClick != true)
@@ -144,8 +168,7 @@ void Game::updatePollEvents()
 				this->updateNodes('L');
 				lockLeftClick = true;
 			}
-
-			if (ev.mouseButton.button == sf::Mouse::Right && lockRightClick != true)
+			else if (ev.mouseButton.button == sf::Mouse::Right && lockRightClick != true)
 			{
 				this->updateNodes('R');
 				lockRightClick = true;
@@ -158,11 +181,22 @@ void Game::updatePollEvents()
 				this->updateNodes('S');
 				lockSpacebar = true;
 			}
-			if (ev.key.code == sf::Keyboard::A && lockA != true)
+			else if (ev.key.code == sf::Keyboard::M && lockM != true)
 			{
-				std::cout << "A pressed" << std::endl;
+				this->updateNodes('M');
+				lockM = true;
+			}
+			else if (ev.key.code == sf::Keyboard::Num1 && lockNum1 != true)
+			{
+				std::cout << "1 pressed" << std::endl;
 				this->updateNodes('A');
-				lockA = true;
+				lockNum1 = true;
+			}
+			else if (ev.key.code == sf::Keyboard::Num2 && lockNum2 != true)
+			{
+				std::cout << "2 pressed" << std::endl;
+				this->updateNodes('B');
+				lockNum2 = true;
 			}
 		}
 		if (ev.type == sf::Event::KeyReleased)
@@ -171,9 +205,17 @@ void Game::updatePollEvents()
 			{
 				lockSpacebar = false;
 			}
-			if (ev.key.code == sf::Keyboard::A)
+			else if (ev.key.code == sf::Keyboard::A)
 			{
-				lockA = false;
+				lockNum1 = false;
+			}
+			else if (ev.key.code == sf::Keyboard::Num1)
+			{
+				lockNum2 = false;
+			}
+			else if (ev.key.code == sf::Keyboard::M)
+			{
+				lockM = false;
 			}
 		}
 		if (ev.type == sf::Event::MouseButtonReleased)
@@ -190,11 +232,7 @@ void Game::updatePollEvents()
 	}
 }
 
-void Game::updateAStarAlg()
-{
-	
-}
-
+// Time Complexity O(V+E)
 void Game::updateBFS()
 {
 	this->updateNodeLocation();
@@ -207,7 +245,7 @@ void Game::updateBFS()
 	{
 		Node* currentNode = nodeQueue.front();
 		nodeQueue.pop_front();
-		currentNode->colorPath();
+		currentNode->colorVisitedNode();
 
 		for (auto* neighbor : currentNode->neighbors)
 		{
@@ -218,14 +256,35 @@ void Game::updateBFS()
 					neighbor->parent = currentNode;
 					nodeQueue.emplace_back(neighbor);
 					neighbor->isVisited = true;
-					neighbor->colorPath();
+					neighbor->colorVisitedNode();
 				}
 			}
 		}
 	}
 	nodeQueue.clear();
+
+	this->updatePath();
 	algActive = true;
 	std::cout << "BFS updated" << std::endl;
+}
+
+void Game::updatedDFS()
+{
+
+}
+
+void Game::updatePath()
+{
+	Node* traverse = endingNode;
+
+	if (traverse != nullptr)
+	{
+		while (traverse->parent != nullptr)
+		{
+			traverse->colorPathNode();
+			traverse = traverse->parent;
+		}
+	}
 }
 
 void Game::render()

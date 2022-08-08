@@ -1,8 +1,6 @@
 #pragma once
 #include "Node.h"
 #include <deque>
-#include <chrono>
-#include <thread>
 
 class Game : private Node
 {
@@ -42,8 +40,9 @@ public:
 	void updateNodes(char algorithm);
 	void updatePollEvents();
 	void updateNodeLocation();
-	void updateAStarAlg();
 	void updateBFS();
+	void updatedDFS();
+	void updatePath();
 
 	void render();
 };
