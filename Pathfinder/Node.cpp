@@ -167,6 +167,16 @@ void Node::completeReset()
 	this->assignFillColor();
 }
 
+void Node::algorithmReset()
+{
+	if (this->isVisited == true && this->setStart == false && this->setEnd == false)
+		this->nodeState = NODE_IDLE;
+	
+	this->parent = nullptr;
+	this->assignFillColor();
+	this->isVisited = false;
+}
+
 void Node::assignFillColor()
 {
 	switch (this->nodeState)

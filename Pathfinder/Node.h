@@ -64,6 +64,7 @@ public:
 	void resetNodes(const sf::Vector2f mousePos);
 	void updateNodes(const sf::Vector2f mousePos);
 	void completeReset();
+	void algorithmReset();
 	void assignFillColor();
 	void colorVisitedNode();
 	void colorPathNode();

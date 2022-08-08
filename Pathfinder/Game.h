@@ -1,6 +1,7 @@
 #pragma once
 #include "Node.h"
 #include <deque>
+#include <stack>
 
 class Game : private Node
 {
@@ -11,6 +12,7 @@ private:
 	// Resources
 	std::vector<Node*> nodes;
 	std::deque<Node*> nodeQueue;
+	std::stack<Node*> nodeStack;
 
 	// Variables
 	const float screenWidth = 1800.0f;
@@ -41,7 +43,7 @@ public:
 	void updatePollEvents();
 	void updateNodeLocation();
 	void updateBFS();
-	void updatedDFS();
+	void updateDFS();
 	void updatePath();
 
 	void render();

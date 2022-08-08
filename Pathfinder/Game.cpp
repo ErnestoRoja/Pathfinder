@@ -18,6 +18,7 @@ void Game::initNodes()
 	}
 }
 
+// Neighbors of a node are initialized in the following order: Top, Right, Down, Left (NESW)
 void Game::initNeighbors()
 {
 	for (unsigned int x = 0; x < columns_X; x++)
@@ -26,12 +27,13 @@ void Game::initNeighbors()
 		{
 			if (y > 0)
 				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y - 1) * columns_X + (x + 0)]);
+			if (x < columns_X - 1)
+				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 0) * columns_X + (x + 1)]);
 			if (y < rows_Y - 1)
 				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 1) * columns_X + (x + 0)]);
 			if (x > 0)
 				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 0) * columns_X + (x - 1)]);
-			if (x < columns_X - 1)
-				nodes[y * columns_X + x]->neighbors.push_back(nodes[(y + 0) * columns_X + (x + 1)]);
+			
 		}
 	}
 }
@@ -99,7 +101,7 @@ void Game::updateNodes(char key)
 	case 'B':  // Num2 (DFS)
 		if (checkActive() == true)
 		{
-			//this->updateAStarAlg();
+			this->updateDFS();
 		}
 		break;
 	case 'L':   // Left Clicked
@@ -117,7 +119,6 @@ void Game::updateNodes(char key)
 			for (auto* i : this->nodes)
 			{
 				i->update((sf::Vector2f)this->mousePosWindow);
-
 			}
 		}
 		break;
@@ -127,19 +128,27 @@ void Game::updateNodes(char key)
 			for (auto* i : this->nodes)
 			{
 				i->update((sf::Vector2f)this->mousePosWindow);
-
 			}
 		}
 		break;
-	case 'M':    // M key (complete rest)
+	case 'N':    // N key (algorithm reset)
 		if (algActive == true)
 		{
 			for (auto* i : this->nodes)
 			{
-				i->completeReset();
+				i->algorithmReset();
 			}
+			std::cout << "partial reset" << std::endl;
 			algActive = false;
 		}
+		break;
+	case 'M':    // M key (complete rest)
+		for (auto* i : this->nodes)
+		{
+			i->completeReset();
+		}
+		std::cout << "complete reset" << std::endl;
+		algActive = false;
 		break;
 	default:
 		std::cout << "switch default" << std::endl;
@@ -159,6 +168,7 @@ void Game::updatePollEvents()
 		bool lockRightClick = false;
 		bool lockSpacebar = false;
 		bool lockM = false;
+		bool lockN = false;
 		bool lockNum1 = false;
 		bool lockNum2 = false;
 		if (ev.type == sf::Event::MouseButtonPressed)
@@ -185,6 +195,11 @@ void Game::updatePollEvents()
 			{
 				this->updateNodes('M');
 				lockM = true;
+			}
+			else if (ev.key.code == sf::Keyboard::N && lockN != true)
+			{
+				this->updateNodes('N');
+				lockN = true;
 			}
 			else if (ev.key.code == sf::Keyboard::Num1 && lockNum1 != true)
 			{
@@ -217,6 +232,10 @@ void Game::updatePollEvents()
 			{
 				lockM = false;
 			}
+			else if (ev.key.code == sf::Keyboard::N)
+			{
+				lockN = false;
+			}
 		}
 		if (ev.type == sf::Event::MouseButtonReleased)
 		{
@@ -232,7 +251,7 @@ void Game::updatePollEvents()
 	}
 }
 
-// Time Complexity O(V+E)
+// Time Complexity O(V+E) in a graph
 void Game::updateBFS()
 {
 	this->updateNodeLocation();
@@ -249,15 +268,12 @@ void Game::updateBFS()
 
 		for (auto* neighbor : currentNode->neighbors)
 		{
-			if (neighbor->isVisited == false)
+			if (neighbor->isVisited == false && neighbor->isWall == false)
 			{
-				if (neighbor->isWall == false)
-				{
-					neighbor->parent = currentNode;
-					nodeQueue.emplace_back(neighbor);
-					neighbor->isVisited = true;
-					neighbor->colorVisitedNode();
-				}
+				neighbor->parent = currentNode;
+				nodeQueue.emplace_back(neighbor);
+				neighbor->isVisited = true;
+				neighbor->colorVisitedNode();
 			}
 		}
 	}
@@ -268,9 +284,36 @@ void Game::updateBFS()
 	std::cout << "BFS updated" << std::endl;
 }
 
-void Game::updatedDFS()
+// Time Complexity O(V+E) in a graph
+void Game::updateDFS()
 {
+	this->updateNodeLocation();
 
+	Node* srcNode = startingNode;
+	nodeStack.push(srcNode);
+	srcNode->isVisited = true;
+
+	while (!nodeStack.empty() && (endingNode->checkVisited() == false))
+	{
+		Node* currentNode = nodeStack.top();
+		nodeStack.pop();
+		currentNode->colorVisitedNode();
+
+		for (auto* neighbor : currentNode->neighbors)
+		{
+			if (neighbor->isVisited == false && neighbor->isWall == false)
+			{
+				neighbor->parent = currentNode;
+				nodeStack.push(neighbor);
+				neighbor->isVisited = true;
+				neighbor->colorVisitedNode();
+			}
+		}
+	}
+
+	this->updatePath();
+	algActive = true;
+	std::cout << "DFS updated" << std::endl;
 }
 
 void Game::updatePath()
