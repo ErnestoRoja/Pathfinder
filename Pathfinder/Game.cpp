@@ -104,6 +104,18 @@ void Game::updateNodes(char key)
 			this->updateDFS();
 		}
 		break;
+	case 'C':  // Num3 (Dijkstra)
+		if (checkActive() == true)
+		{
+			this->updateDijkstra();
+		}
+		break;
+	case 'D':  // Num4 (A*)
+		if (checkActive() == true)
+		{
+			this->updateAStar();
+		}
+		break;
 	case 'L':   // Left Clicked
 		if (algActive == false)
 		{
@@ -164,94 +176,57 @@ void Game::updatePollEvents()
 		if (ev.Event::type == sf::Event::Closed || ev.Event::KeyPressed && ev.Event::key.code == sf::Keyboard::Escape)
 			this->window->close();
 
-		bool lockLeftClick = false;
-		bool lockRightClick = false;
-		bool lockSpacebar = false;
-		bool lockM = false;
-		bool lockN = false;
-		bool lockNum1 = false;
-		bool lockNum2 = false;
 		if (ev.type == sf::Event::MouseButtonPressed)
 		{
-			if (ev.mouseButton.button == sf::Mouse::Left && lockLeftClick != true)
+			if (ev.mouseButton.button == sf::Mouse::Left)
 			{
 				this->updateNodes('L');
-				lockLeftClick = true;
 			}
-			else if (ev.mouseButton.button == sf::Mouse::Right && lockRightClick != true)
+			else if (ev.mouseButton.button == sf::Mouse::Right)
 			{
 				this->updateNodes('R');
-				lockRightClick = true;
 			}
 		}
 		if (ev.type == sf::Event::KeyPressed)
 		{
-			if (ev.key.code == sf::Keyboard::Space && lockSpacebar != true)
-			{
-				this->updateNodes('S');
-				lockSpacebar = true;
-			}
-			else if (ev.key.code == sf::Keyboard::M && lockM != true)
-			{
-				this->updateNodes('M');
-				lockM = true;
-			}
-			else if (ev.key.code == sf::Keyboard::N && lockN != true)
-			{
-				this->updateNodes('N');
-				lockN = true;
-			}
-			else if (ev.key.code == sf::Keyboard::Num1 && lockNum1 != true)
-			{
-				std::cout << "1 pressed" << std::endl;
-				this->updateNodes('A');
-				lockNum1 = true;
-			}
-			else if (ev.key.code == sf::Keyboard::Num2 && lockNum2 != true)
-			{
-				std::cout << "2 pressed" << std::endl;
-				this->updateNodes('B');
-				lockNum2 = true;
-			}
-		}
-		if (ev.type == sf::Event::KeyReleased)
-		{
 			if (ev.key.code == sf::Keyboard::Space)
 			{
-				lockSpacebar = false;
-			}
-			else if (ev.key.code == sf::Keyboard::A)
-			{
-				lockNum1 = false;
-			}
-			else if (ev.key.code == sf::Keyboard::Num1)
-			{
-				lockNum2 = false;
+				this->updateNodes('S');
+				
 			}
 			else if (ev.key.code == sf::Keyboard::M)
 			{
-				lockM = false;
+				this->updateNodes('M');
+				
 			}
 			else if (ev.key.code == sf::Keyboard::N)
 			{
-				lockN = false;
+				this->updateNodes('N');
+				
 			}
-		}
-		if (ev.type == sf::Event::MouseButtonReleased)
-		{
-			if (ev.mouseButton.button == sf::Mouse::Left)
+			else if (ev.key.code == sf::Keyboard::Num1)
 			{
-				lockLeftClick = false;
+				this->updateNodes('A');
+			
 			}
-			else if (ev.mouseButton.button == sf::Mouse::Right)
+			else if (ev.key.code == sf::Keyboard::Num2)
 			{
-				lockRightClick = false;
+				this->updateNodes('B');
+				
+			}
+			else if (ev.key.code == sf::Keyboard::Num3)
+			{
+				this->updateNodes('C');
+				
+			}
+			else if (ev.key.code == sf::Keyboard::Num4)
+			{
+				this->updateNodes('D');
 			}
 		}
 	}
 }
 
-// Time Complexity O(V+E) in a graph
 void Game::updateBFS()
 {
 	this->updateNodeLocation();
@@ -277,14 +252,13 @@ void Game::updateBFS()
 			}
 		}
 	}
-	nodeQueue.clear();
 
+	nodeQueue.clear();
 	this->updatePath();
 	algActive = true;
 	std::cout << "BFS updated" << std::endl;
 }
 
-// Time Complexity O(V+E) in a graph
 void Game::updateDFS()
 {
 	this->updateNodeLocation();
@@ -316,6 +290,95 @@ void Game::updateDFS()
 	std::cout << "DFS updated" << std::endl;
 }
 
+void Game::updateDijkstra()
+{
+	this->updateNodeLocation();
+
+	auto distanceCompare = [](Node* leftNode, Node* rightNode)
+	{
+		return leftNode->distanceCost < rightNode->distanceCost;
+	};
+
+	Node* srcNode = startingNode;
+	srcNode->distanceCost = 0;
+	nodePriorityQueue.emplace_back(srcNode);
+
+	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))
+	{
+		nodePriorityQueue.sort(distanceCompare);
+		Node* currentNode = nodePriorityQueue.front();
+		nodePriorityQueue.pop_front();
+		currentNode->isVisited = true;
+		currentNode->colorVisitedNode();
+
+		for (auto* neighbor : currentNode->neighbors)
+		{
+			if (neighbor->isVisited == false && neighbor->isWall == false)
+			{
+				float updatedDistance = currentNode->distanceCost + this->calculateDistance(currentNode, neighbor);
+				if (updatedDistance < neighbor->distanceCost)
+				{
+					neighbor->parent = currentNode;
+					neighbor->distanceCost = updatedDistance;
+					neighbor->isVisited = true;
+					nodePriorityQueue.emplace_back(neighbor);
+					neighbor->colorVisitedNode();
+				}
+			}
+		}
+	}
+	nodePriorityQueue.clear();
+	this->updatePath();
+	algActive = true;
+	std::cout << "Dijkstra updated" << std::endl;
+}
+
+void Game::updateAStar()
+{
+	this->updateNodeLocation();
+
+	auto globalCostCompare = [](Node* leftNode, Node* rightNode)
+	{
+		return leftNode->globalCost < rightNode->globalCost;
+	};
+
+	Node* srcNode = startingNode;
+	srcNode->localCost = 0;
+	srcNode->distanceCost = this->calculateDistance(srcNode, endingNode);
+	nodePriorityQueue.emplace_back(srcNode);
+
+	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))
+	{
+		nodePriorityQueue.sort(globalCostCompare);
+		Node* currentNode = nodePriorityQueue.front();
+		nodePriorityQueue.pop_front();
+		currentNode->isVisited = true;
+		currentNode->colorVisitedNode();
+
+		for (auto* neighbor : currentNode->neighbors)
+		{
+			if (neighbor->isVisited == false && neighbor->isWall == false)
+			{
+				float updatedLocalCost = currentNode->localCost + this->calculateDistance(currentNode, neighbor);
+				if (updatedLocalCost < neighbor->localCost)
+				{
+					neighbor->parent = currentNode;
+					neighbor->localCost = updatedLocalCost;
+					neighbor->distanceCost = this->calculateDistance(neighbor, endingNode);
+					neighbor->globalCost = neighbor->localCost + neighbor->distanceCost;
+					neighbor->isVisited = true;
+					nodePriorityQueue.emplace_back(neighbor);
+					neighbor->colorVisitedNode();
+				}
+			}
+		}
+	}
+	nodePriorityQueue.clear();
+	this->updatePath();
+	algActive = true;
+	std::cout << "A* updated" << std::endl;
+}
+
 void Game::updatePath()
 {
 	Node* traverse = endingNode;
@@ -328,6 +391,15 @@ void Game::updatePath()
 			traverse = traverse->parent;
 		}
 	}
+}
+
+float Game::calculateDistance(Node* targetNode, Node* referenceNode)
+{
+	float xDistance = targetNode->x - referenceNode->x;
+	float yDistance = targetNode->y - referenceNode->y;
+
+	// Euclidean distance
+	return sqrt((xDistance * xDistance) + (yDistance * yDistance));
 }
 
 void Game::render()

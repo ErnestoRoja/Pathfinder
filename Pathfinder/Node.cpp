@@ -1,14 +1,16 @@
 #include "Node.h"
 
-void Node::initVariables()
+void Node::initVariables(float x, float y)
 {
 	this->parent = nullptr;
 	this->isWall = false;
 	this->isVisited = false;
-	this->needsUpdate = false;
 	this->x = x;
 	this->y = y;
 	this->nodeState = NODE_IDLE;
+	this->distanceCost = INFINITY;
+	this->localCost = INFINITY;
+	this->globalCost = INFINITY;
 }
 
 void Node::initShapes(float x, float y)
@@ -26,7 +28,7 @@ Node::Node()
 
 Node::Node(float x, float y)
 {
-	this->initVariables();
+	this->initVariables(x, y);
 	this->initShapes(x, y);
 }
 
@@ -101,7 +103,6 @@ void Node::resetNodes(const sf::Vector2f mousePos)
 			this->nodeState = NODE_IDLE;
 			CURRENT_WALL_ACTIVE--;
 			this->isWall = false;
-			//this->needsUpdate = true;
 			std::cout << "Wall count reset: " << CURRENT_WALL_ACTIVE << std::endl;
 		}
 	}
@@ -117,7 +118,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 			this->isWall = true;
 			this->nodeState = NODE_ACTIVE_SHIFT;
 			CURRENT_WALL_ACTIVE++;
-			//this->needsUpdate = true;
 			std::cout << "Wall Count: " << CURRENT_WALL_ACTIVE << std::endl;
 		}
 	}
@@ -131,7 +131,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 				this->nodeState = NODE_ACTIVE_LEFT;
 				this->setStart = true;
 				CURRENT_LEFT_ACTIVE++;
-				//this->needsUpdate = true;
 				std::cout << "Left active: " << CURRENT_LEFT_ACTIVE << std::endl;
 			}
 		}
@@ -146,7 +145,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 				this->nodeState = NODE_ACTIVE_RIGHT;
 				this->setEnd = true;
 				CURRENT_RIGHT_ACTIVE++;
-				//this->needsUpdate = true;
 				std::cout << "Right active: " << CURRENT_RIGHT_ACTIVE << std::endl;
 			}
 		}
@@ -161,6 +159,9 @@ void Node::completeReset()
 	this->parent = nullptr;
 	this->isWall = false;
 	this->isVisited = false;
+	this->distanceCost = INFINITY;
+	this->localCost = INFINITY;
+	this->globalCost = INFINITY;
 	this->nodeState = NODE_IDLE;
 	CURRENT_LEFT_ACTIVE = 0;
 	CURRENT_RIGHT_ACTIVE = 0;
@@ -173,6 +174,9 @@ void Node::algorithmReset()
 		this->nodeState = NODE_IDLE;
 	
 	this->parent = nullptr;
+	this->distanceCost = INFINITY;
+	this->localCost = INFINITY;
+	this->globalCost = INFINITY;
 	this->assignFillColor();
 	this->isVisited = false;
 }

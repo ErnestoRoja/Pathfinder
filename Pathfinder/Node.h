@@ -16,7 +16,6 @@ static int CURRENT_WALL_ACTIVE = 0;
 class Node
 {
 private:
-
 	bool setStart;
 	bool setEnd;
 
@@ -43,10 +42,11 @@ public:
 	Node* parent;
 	bool isWall;
 	bool isVisited;
-	float fCost;
-	float hCost;
-	int x;
-	int y;
+	float globalCost;
+	float localCost;
+	float distanceCost;
+	float x;
+	float y;
 	bool needsUpdate;
 	bool startAlgo;
 	short unsigned nodeState;
@@ -72,7 +72,7 @@ public:
 	// Public functions
 	void update(const sf::Vector2f mousePos);
 
-	void initVariables();
+	void initVariables(float x, float y);
 	void initShapes(float x, float y);
 
 	void render(sf::RenderTarget* target);
