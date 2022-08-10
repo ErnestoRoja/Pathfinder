@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <math.h>
+#include <chrono>
+#include <thread>
 
 enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT, NODE_ACTIVE_PATH};
 const unsigned int MAX_LEFT_ACTIVE = 1;
@@ -47,14 +49,12 @@ public:
 	float distanceCost;
 	float x;
 	float y;
-	bool needsUpdate;
 	bool startAlgo;
 	short unsigned nodeState;
 
 	// Accessors
 	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
-	bool needsToBeUpdated();
 	const bool checkVisited() const;
 	const bool isStart() const;
 	const bool isEnd() const;

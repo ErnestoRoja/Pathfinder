@@ -1,5 +1,6 @@
 #include "Game.h"
 
+
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(screenWidth, screenHeight), "Pathfinder", sf::Style::Close | sf::Style::Titlebar);
@@ -38,9 +39,21 @@ void Game::initNeighbors()
 	}
 }
 
+void Game::initGUI()
+{
+	this->tutorialButton = new Button(1820.f, 5.f, 460.f, 240.f, 
+		"Tutorial: \n 1. Set starting node. \n 2. Set end node. \n 3. Set any walls you would like. \n 4. Visualize the algorithm. \n 5. Reset and repeat.",
+		sf::Color(9,211,230,255), sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255));
+
+	this->keybindsButton = new Button(1820.f, 255.f, 460.f, 240.f,
+		"Key Binds: \n Set Start - Left Click \n Set End - Right Click \n Set Wall - Left-shift Left Click \n Reset Specific Node - Spacebar",
+		sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255));
+}
+
 Game::Game()
 {
 	this->initWindow();
+	this->initGUI();
 	this->initNodes();
 	this->initNeighbors();
 }
@@ -53,6 +66,9 @@ Game::~Game()
 	{
 		delete i;
 	}
+
+	delete this->tutorialButton;
+	delete this->keybindsButton;
 }
 
 void Game::run()
@@ -173,7 +189,7 @@ void Game::updatePollEvents()
 	sf::Event ev;
 	while (this->window->pollEvent(ev))
 	{
-		if (ev.Event::type == sf::Event::Closed || ev.Event::KeyPressed && ev.Event::key.code == sf::Keyboard::Escape)
+		if (ev.Event::type == sf::Event::Closed)
 			this->window->close();
 
 		if (ev.type == sf::Event::MouseButtonPressed)
@@ -410,6 +426,9 @@ void Game::render()
 	{
 		node->render(this->window);
 	}
+
+	tutorialButton->render(this->window);
+	keybindsButton->render(this->window);
 
 	this->window->display();
 }

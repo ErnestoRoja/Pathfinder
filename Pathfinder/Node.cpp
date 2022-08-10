@@ -51,11 +51,6 @@ const bool Node::isPressed() const
 	return false;
 }
 
-bool Node::needsToBeUpdated()
-{
-	return this->needsUpdate;
-}
-
 const bool Node::checkVisited() const
 {
 	return this->isVisited;
