@@ -1,4 +1,4 @@
-# Pathfinder
+# Pathfinding Visualizer
 
 --- 
 ### What it looks like
