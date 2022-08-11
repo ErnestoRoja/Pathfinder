@@ -1,6 +1,6 @@
 #include "Game.h"
 
-
+// Initializes the window and caps the frame rate
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(screenWidth, screenHeight), "Pathfinder", sf::Style::Close | sf::Style::Titlebar);
@@ -8,6 +8,7 @@ void Game::initWindow()
 	this->window->setVerticalSyncEnabled(false);
 }
 
+// Initializes all the nodes
 void Game::initNodes()
 {
 	for (unsigned int y = 0; y < rows_Y; y++)
@@ -39,42 +40,43 @@ void Game::initNeighbors()
 	}
 }
 
+// Initializes all the buttons
 void Game::initGUI()
 {
 	this->tutorialButton = new Button(1820.f, 5.f, 460.f, 240.f, 
 		"Tutorial: \n 1. Set starting node. \n 2. Set end node. \n 3. Set any walls you would like. \n 4. Visualize the algorithm. \n 5. Reset and repeat.",
-		sf::Color(9,211,230,255), sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255));
+		sf::Color(233, 150, 122, 255), sf::Color(233, 150, 122, 255), sf::Color(233, 150, 122, 255));
 
 	this->keybindsButton = new Button(1820.f, 255.f, 460.f, 240.f,
 		"Key Binds: \n Set Start - Left Click \n Set End - Right Click \n Set Wall - Left-shift Left Click \n Reset Specific Node - Spacebar",
-		sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255));
+		sf::Color(233, 150, 122, 255), sf::Color(233, 150, 122, 255), sf::Color(233, 150, 122, 255));
 
 	this->BFSButton = new Button(1820.f, 500.f, 200.f, 70.f, "Visualize BFS",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->DFSButton = new Button(1820.f, 578.f, 200.f, 70.f, "Visualize DFS",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->DijkstraButton = new Button(1820.f, 656.f, 200.f, 70.f, "Visualize Dijkstra",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->AStarButton = new Button(1820.f, 734.f, 200.f, 70.f, "Visualize A*",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->resetAlgButton = new Button(2050.f, 500.f, 200.f, 70.f, "Reset Algorithm",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->resetAllButton = new Button(2050.f, 578.f, 200.f, 70.f, "Reset All",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(255, 229, 180, 200), sf::Color(225, 229, 180, 255), sf::Color(200, 229, 180, 255));
 
 	this->customButton1 = new Button(1820.f, 920.f, 200.f, 70.f, "Custom Maze 1",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+		sf::Color(253, 188, 180, 150), sf::Color(253, 188, 180, 255), sf::Color(253, 200, 200, 255));
 
 	this->customButton2 = new Button(2050.f, 920.f, 200.f, 70.f, "Custom Maze 2",
-		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
-
+		sf::Color(253, 188, 180, 150), sf::Color(253, 188, 180, 255), sf::Color(253, 200, 200, 255));
 }
 
+// Default constructor
 Game::Game()
 {
 	this->initWindow();
@@ -83,6 +85,7 @@ Game::Game()
 	this->initNeighbors();
 }
 
+// Destructor
 Game::~Game()
 {
 	delete this->window;
@@ -104,6 +107,7 @@ Game::~Game()
 	delete this->customButton2;
 }
 
+// Main window functionality
 void Game::run()
 {
 	while (this->window->isOpen())
@@ -116,12 +120,14 @@ void Game::run()
 	}
 }
 
+// Keeps track of the mouse position while it is in the window
 void Game::updateMousePositions()
 {
 	this->mousePosWindow = sf::Mouse::getPosition(*this->window);
 	this->mousePosView = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
+// Customizes the grid based on the files in the "Pathfinder/grids" folder
 void Game::setCustomGrid(std::string filename)
 {
 	std::vector<int> testFileData;
@@ -141,7 +147,6 @@ void Game::setCustomGrid(std::string filename)
 		{
 			i->nodeState = NODE_ACTIVE_SHIFT;
 			i->isWall = true;
-			CURRENT_WALL_ACTIVE++;
 		}
 		else
 		{
@@ -152,6 +157,7 @@ void Game::setCustomGrid(std::string filename)
 	}
 }
 
+// Handles everything that can be updated
 void Game::update()
 {
 	this->updateMousePositions();
@@ -165,6 +171,7 @@ void Game::update()
 	this->customButton2->update(this->mousePosView);
 }
 
+// Sets the starting and ending nodes
 void Game::updateNodeLocation()
 {
 	for (auto* i : this->nodes)
@@ -176,6 +183,7 @@ void Game::updateNodeLocation()
 	}
 }
 
+// Handles all the possible updates that can occur
 void Game::updateNodes(char key)
 {
 	switch (key)
@@ -213,7 +221,7 @@ void Game::updateNodes(char key)
 			}
 		}
 		break;
-	case 'N':    // N key (algorithm reset)
+	case 'N':    // Algorithm reset
 		if (algActive == true)
 		{
 			for (auto* i : this->nodes)
@@ -223,14 +231,14 @@ void Game::updateNodes(char key)
 			algActive = false;
 		}
 		break;
-	case 'M':    // M key (complete rest)
+	case 'M':    // Complete reset
 		for (auto* i : this->nodes)
 		{
 			i->completeReset();
 		}
 		algActive = false;
 		break;
-	case 'K': // Custom maze
+	case 'K': // Custom mazes
 		for (auto* i : this->nodes)
 		{
 			i->completeReset();
@@ -247,6 +255,7 @@ void Game::updateNodes(char key)
 	}
 }
 
+// Handles user inputs (which determines what should be updated)
 void Game::updatePollEvents()
 {
 	sf::Event ev;
@@ -299,23 +308,25 @@ void Game::updatePollEvents()
 	}
 }
 
+// BFS algorithm
 void Game::updateBFS()
 {
+	// Updates the starting and end positions
 	this->updateNodeLocation();
 
 	Node* srcNode = startingNode;
 	nodeQueue.emplace_back(srcNode);
 	srcNode->isVisited = true;
 
-	while (!nodeQueue.empty() && (endingNode->checkVisited() == false))
+	while (!nodeQueue.empty() && (endingNode->checkVisited() == false))   // While the end node hasn't been found
 	{
 		Node* currentNode = nodeQueue.front();
 		nodeQueue.pop_front();
 		currentNode->colorVisitedNode();
 
-		for (auto* neighbor : currentNode->neighbors)
+		for (auto* neighbor : currentNode->neighbors)    // Updates all the neighbors of a node
 		{
-			if (neighbor->isVisited == false && neighbor->isWall == false)
+			if (neighbor->isVisited == false && neighbor->isWall == false)   // If the neighbor hasn't been visited and is not a wall, update
 			{
 				neighbor->parent = currentNode;
 				nodeQueue.emplace_back(neighbor);
@@ -324,21 +335,24 @@ void Game::updateBFS()
 			}
 		}
 	}
-
 	nodeQueue.clear();
+
+	// Creates a path from the starting node to the end node
 	this->updatePath();
 	algActive = true;
 }
 
+// DFS algorithm
 void Game::updateDFS()
 {
+	// Updates the starting and end positions
 	this->updateNodeLocation();
 
 	Node* srcNode = startingNode;
 	nodeStack.push(srcNode);
 	srcNode->isVisited = true;
 
-	while (!nodeStack.empty() && (endingNode->checkVisited() == false))
+	while (!nodeStack.empty() && (endingNode->checkVisited() == false))   // While the end node hasn't been found
 	{
 		Node* currentNode = nodeStack.top();
 		nodeStack.pop();
@@ -346,7 +360,7 @@ void Game::updateDFS()
 
 		for (auto* neighbor : currentNode->neighbors)
 		{
-			if (neighbor->isVisited == false && neighbor->isWall == false)
+			if (neighbor->isVisited == false && neighbor->isWall == false)   // If the neighbor hasn't been visited and is not a wall, update
 			{
 				neighbor->parent = currentNode;
 				nodeStack.push(neighbor);
@@ -355,15 +369,24 @@ void Game::updateDFS()
 			}
 		}
 	}
-
+	// Creates a path from the starting node to the end node
 	this->updatePath();
 	algActive = true;
 }
 
+// Dijkstra algorithm
 void Game::updateDijkstra()
 {
+	/* 
+	    Dijkstra's algorithm behaves exactly like BFS when run on an unweighted graph,
+		which is the case for this project. Otherwise, the algorithm's priority queue would not contain
+		at most two distinct distance values - which would result in varying behaviors.
+	*/
+
+	// Updates the starting and end positions
 	this->updateNodeLocation();
 
+	// Compares the distance of two nodes 
 	auto distanceCompare = [](Node* leftNode, Node* rightNode)
 	{
 		return leftNode->distanceCost < rightNode->distanceCost;
@@ -372,8 +395,9 @@ void Game::updateDijkstra()
 	Node* srcNode = startingNode;
 	srcNode->distanceCost = 0;
 	nodePriorityQueue.emplace_back(srcNode);
+	srcNode->isVisited = true;
 
-	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))
+	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))  // While the end node hasn't been found
 	{
 		nodePriorityQueue.sort(distanceCompare);
 		Node* currentNode = nodePriorityQueue.front();
@@ -383,10 +407,10 @@ void Game::updateDijkstra()
 
 		for (auto* neighbor : currentNode->neighbors)
 		{
-			if (neighbor->isVisited == false && neighbor->isWall == false)
+			if (neighbor->isVisited == false && neighbor->isWall == false)  // If the neighbor hasn't been visited and is not a wall, update
 			{
 				float updatedDistance = currentNode->distanceCost + this->calculateDistance(currentNode, neighbor);
-				if (updatedDistance < neighbor->distanceCost)
+				if (updatedDistance < neighbor->distanceCost)   // Only updates the neighbors with the least weighted connections
 				{
 					neighbor->parent = currentNode;
 					neighbor->distanceCost = updatedDistance;
@@ -398,14 +422,19 @@ void Game::updateDijkstra()
 		}
 	}
 	nodePriorityQueue.clear();
+
+	// Creates a path from the starting node to the end node
 	this->updatePath();
 	algActive = true;
 }
 
+// A* algorithm
 void Game::updateAStar()
 {
+	// Updates the starting and end positions
 	this->updateNodeLocation();
 
+	// Compares the global cost of two nodes 
 	auto globalCostCompare = [](Node* leftNode, Node* rightNode)
 	{
 		return leftNode->globalCost < rightNode->globalCost;
@@ -415,21 +444,21 @@ void Game::updateAStar()
 	srcNode->localCost = 0;
 	srcNode->distanceCost = this->calculateDistance(srcNode, endingNode);
 	nodePriorityQueue.emplace_back(srcNode);
+	srcNode->isVisited = true;
 
-	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))
+	while (!nodePriorityQueue.empty() && (endingNode->checkVisited() == false))  // While the end node hasn't been found
 	{
 		nodePriorityQueue.sort(globalCostCompare);
 		Node* currentNode = nodePriorityQueue.front();
 		nodePriorityQueue.pop_front();
-		currentNode->isVisited = true;
 		currentNode->colorVisitedNode();
 
 		for (auto* neighbor : currentNode->neighbors)
 		{
-			if (neighbor->isVisited == false && neighbor->isWall == false)
+			if (neighbor->isVisited == false && neighbor->isWall == false)   // If the neighbor hasn't been visited and is not a wall, update
 			{
 				float updatedLocalCost = currentNode->localCost + this->calculateDistance(currentNode, neighbor);
-				if (updatedLocalCost < neighbor->localCost)
+				if (updatedLocalCost < neighbor->localCost)  // Only updates the neighbors that have the lowest local cost
 				{
 					neighbor->parent = currentNode;
 					neighbor->localCost = updatedLocalCost;
@@ -443,10 +472,13 @@ void Game::updateAStar()
 		}
 	}
 	nodePriorityQueue.clear();
+
+	// Creates a path from the starting node to the end node
 	this->updatePath();
 	algActive = true;
 }
 
+// Creates a path from the starting node to the end node
 void Game::updatePath()
 {
 	Node* traverse = endingNode;
@@ -461,15 +493,16 @@ void Game::updatePath()
 	}
 }
 
+// Calculates the Euclidean distance between two nodes
 float Game::calculateDistance(Node* targetNode, Node* referenceNode)
 {
 	float xDistance = targetNode->x - referenceNode->x;
 	float yDistance = targetNode->y - referenceNode->y;
 
-	// Euclidean distance
 	return sqrt((xDistance * xDistance) + (yDistance * yDistance));
 }
 
+// Renders all the nodes and buttons to the window
 void Game::render()
 {
 	this->window->clear(sf::Color(169, 169, 169, 255));

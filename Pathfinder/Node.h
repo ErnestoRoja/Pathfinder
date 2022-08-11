@@ -5,28 +5,23 @@
 #include <iostream>
 #include <string>
 #include <math.h>
-#include <chrono>
-#include <thread>
 
 enum node_states {NODE_IDLE = 0, NODE_ACTIVE_LEFT, NODE_ACTIVE_RIGHT, NODE_ACTIVE_SHIFT, NODE_ACTIVE_PATH};
 const unsigned int MAX_LEFT_ACTIVE = 1;
 const unsigned int MAX_RIGHT_ACTIVE = 1;
 static int CURRENT_LEFT_ACTIVE = 0;
 static int CURRENT_RIGHT_ACTIVE = 0;
-static int CURRENT_WALL_ACTIVE = 0;
 
 class Node
 {
 private:
-	
-
 	// Private variables
 	sf::RectangleShape node;
 	sf::Color idleColor = sf::Color::White;
 	sf::Color activeColorLeft = sf::Color::Green;
 	sf::Color activeColorRight = sf::Color::Red;
 	sf::Color wallColor = sf::Color::Black;
-	sf::Color pathColor = sf::Color::Cyan;
+	sf::Color visitedNodeColor = sf::Color(130, 102, 68, 255);
 
 	// Private functions
 	void initVariables(float x, float y);
@@ -37,11 +32,13 @@ public:
 	Node(float x, float y);
 	virtual ~Node();
 
+	// Public resources
+	std::vector<Node*> neighbors;
+
 	// Public variables
 	bool setStart;
 	bool setEnd;
 	const sf::Vector2f nodeSize = { 50, 50 };
-	std::vector<Node*> neighbors;
 	Node* parent;
 	bool isWall;
 	bool isVisited;
@@ -54,7 +51,6 @@ public:
 
 	// Public functions
 	void update(const sf::Vector2f mousePos);
-
 	void render(sf::RenderTarget* target);
 
 	// Modifiers

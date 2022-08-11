@@ -1,5 +1,6 @@
 #include "Node.h"
 
+// Blueprint for all initializes nodes
 void Node::initVariables(float x, float y)
 {
 	this->parent = nullptr;
@@ -13,30 +14,35 @@ void Node::initVariables(float x, float y)
 	this->globalCost = INFINITY;
 }
 
+// How each node looks
 void Node::initShapes(float x, float y)
 {
 	this->node.setSize(nodeSize);
 	this->node.setPosition(sf::Vector2f(x * nodeSize.x, y * nodeSize.y));
 	this->node.setOutlineThickness(nodeSize.x / 15);
-	this->node.setOutlineColor(sf::Color::Red);
+	this->node.setOutlineColor(sf::Color::Black);
 }
 
+// Default constructor
 Node::Node()
 {
 
 }
 
+// Constructor
 Node::Node(float x, float y)
 {
 	this->initVariables(x, y);
 	this->initShapes(x, y);
 }
 
+// Destructor
 Node::~Node()
 {
 
 }
 
+// Returns whether a node is active
 const bool Node::isPressed() const
 {
 	if (this->nodeState == NODE_ACTIVE_LEFT || this->nodeState == NODE_ACTIVE_RIGHT)
@@ -46,21 +52,25 @@ const bool Node::isPressed() const
 	return false;
 }
 
+// Returns whether a node is visited
 const bool Node::checkVisited() const
 {
 	return this->isVisited;
 }
 
+// Returns whether a node is the start
 const bool Node::isStart() const
 {
 	return this->setStart;
 }
 
+// Returns whether a node is the end
 const bool Node::isEnd() const
 {
 	return this->setEnd;
 }
 
+// Returns whether both nodes are active
 const bool Node::checkActive() const
 {
 	if (CURRENT_LEFT_ACTIVE == 1 && CURRENT_RIGHT_ACTIVE == 1)
@@ -69,31 +79,35 @@ const bool Node::checkActive() const
 	return false;
 }
 
+// Resets a node based on user input
 void Node::resetNodes(const sf::Vector2f mousePos)
 {
 	if (this->node.getGlobalBounds().contains(mousePos))
 	{
+		// Spacebar while hovering starting node (removes the starting node)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_LEFT)
 		{
 			this->nodeState = NODE_IDLE;
 			CURRENT_LEFT_ACTIVE = 0;
 			this->setStart = false;
 		}
+		// Spacebar while hovering the end node (removes the end node)
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_RIGHT)
 		{
 			this->nodeState = NODE_IDLE;
 			CURRENT_RIGHT_ACTIVE = 0;
 			this->setEnd = false;
 		}
+		// Spacebar while hovering a wall (removes the wall)
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_SHIFT)
 		{
 			this->nodeState = NODE_IDLE;
-			CURRENT_WALL_ACTIVE--;
 			this->isWall = false;
 		}
 	}
 }
 
+// Updates a node based on user input
 void Node::updateNodes(const sf::Vector2f mousePos)
 {
 	if (this->node.getGlobalBounds().contains(mousePos))
@@ -103,14 +117,13 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 		{
 			this->nodeState = NODE_ACTIVE_SHIFT;
 			this->isWall = true;
-			CURRENT_WALL_ACTIVE++;
 		}
 	}
 	if ((CURRENT_LEFT_ACTIVE < 1))
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
 		{
-			// Left-clicked (sets the start point)
+			// Left-clicked (sets the start node)
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->isWall == false && this->setEnd == false)
 			{
 				this->nodeState = NODE_ACTIVE_LEFT;
@@ -123,7 +136,7 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 	{
 		if (this->node.getGlobalBounds().contains(mousePos))
 		{
-			// Right-clicked (sets the end point)
+			// Right-clicked (sets the end node)
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->isWall == false && this->setStart == false)
 			{
 				this->nodeState = NODE_ACTIVE_RIGHT;
@@ -135,6 +148,7 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 	
 }
 
+// Sets a node back to its initial conditions
 void Node::completeReset()
 {
 	this->setStart = false;
@@ -151,6 +165,7 @@ void Node::completeReset()
 	this->assignFillColor();
 }
 
+// Sets any variables used by the algorithms back to their initial conditions
 void Node::algorithmReset()
 {
 	if (this->isVisited == true && this->setStart == false && this->setEnd == false)
@@ -164,6 +179,7 @@ void Node::algorithmReset()
 	this->isVisited = false;
 }
 
+// Handles what color each node should be based on its state
 void Node::assignFillColor()
 {
 	switch (this->nodeState)
@@ -186,6 +202,7 @@ void Node::assignFillColor()
 	}
 }
 
+// Keeps the start and end node the same color, but changes the color of any visited node
 void Node::colorVisitedNode()
 {
 	if (this->isStart() == true)
@@ -193,9 +210,10 @@ void Node::colorVisitedNode()
 	else if (this->isEnd() == true)
 		this->node.setFillColor(activeColorRight);
 	else
-		this->node.setFillColor(pathColor);
+		this->node.setFillColor(visitedNodeColor);
 }
 
+// Keeps the end node the same color, but changes the color of the path
 void Node::colorPathNode()
 {
 	if (this->isEnd() == true)
@@ -204,6 +222,7 @@ void Node::colorPathNode()
 		this->node.setFillColor(sf::Color(244, 164, 96, 255));
 }
 
+// Handles any changes made to a node
 void Node::update(const sf::Vector2f mousePos)
 {
 	this->resetNodes(mousePos);
@@ -211,6 +230,7 @@ void Node::update(const sf::Vector2f mousePos)
 	this->assignFillColor();
 }
 
+// Renders each node to the window
 void Node::render(sf::RenderTarget* target)
 {
 	target->draw(this->node);

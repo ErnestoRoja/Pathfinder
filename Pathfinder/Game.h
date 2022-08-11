@@ -5,8 +5,6 @@
 #include <stack>
 #include <list>
 #include <math.h>
-#include <Windows.h>
-#include <ctime>
 #include <fstream>
 
 class Game : private Node, private Button

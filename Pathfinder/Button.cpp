@@ -1,14 +1,15 @@
 #include "Button.h"
 
+// Default constructor
 Button::Button()
 {
 
 }
 
+// Constructor
 Button::Button(float x, float y, float width, float height, std::string text,
 	sf::Color idleColor, sf::Color hoverColor, sf::Color activeColor)
 {
-
 	this->buttonState = BTN_IDLE;
 
 	if (!this->font.loadFromFile("fonts/Roboto-Regular.ttf"))
@@ -33,11 +34,13 @@ Button::Button(float x, float y, float width, float height, std::string text,
 	this->button.setFillColor(this->idleColor);
 }
 
+// Destructor
 Button::~Button()
 {
 
 }
 
+// Returns whether a button is pressed
 const bool Button::isPressed() const
 {
 	if (this->buttonState == BTN_ACTIVE)
@@ -46,6 +49,7 @@ const bool Button::isPressed() const
 	return false;
 }
 
+// Handles what color each button should be based on its state
 void Button::assignFillColor()
 {
 	switch (this->buttonState)
@@ -65,14 +69,18 @@ void Button::assignFillColor()
 	}
 }
 
+// Changes the state of a button based on user input
 void Button::updateButtons(const sf::Vector2f mousePos)
 {
+	// Idle
 	this->buttonState = BTN_IDLE;
 
+	// Hover
 	if (this->button.getGlobalBounds().contains(mousePos))
 	{
 		this->buttonState = BTN_HOVER;
 
+		// Pressed
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			this->buttonState = BTN_ACTIVE;
@@ -80,12 +88,14 @@ void Button::updateButtons(const sf::Vector2f mousePos)
 	}
 }
 
+// Handles any changes made to a button
 void Button::update(const sf::Vector2f mousePos)
 {
 	this->updateButtons(mousePos);
 	this->assignFillColor();
 }
 
+// Renders each button and text to the window
 void Button::render(sf::RenderTarget* target)
 {
 	target->draw(this->button);
