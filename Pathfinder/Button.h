@@ -18,8 +18,6 @@ private:
 	sf::Color hoverColor;
 	sf::Color activeColor;
 
-	// Private functions
-
 public:
 	Button();
 
@@ -28,10 +26,7 @@ public:
 
 	~Button();
 
-	// Public Variables
-	
 	// Accessors
-	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
 
 	// Public functions

@@ -198,7 +198,6 @@ void Game::updateNodes(char key)
 			{
 				i->algorithmReset();
 			}
-			std::cout << "partial reset" << std::endl;
 			algActive = false;
 		}
 		break;
@@ -207,7 +206,6 @@ void Game::updateNodes(char key)
 		{
 			i->completeReset();
 		}
-		std::cout << "complete reset" << std::endl;
 		algActive = false;
 		break;
 	default:
@@ -299,7 +297,6 @@ void Game::updateBFS()
 	nodeQueue.clear();
 	this->updatePath();
 	algActive = true;
-	std::cout << "BFS updated" << std::endl;
 }
 
 void Game::updateDFS()
@@ -330,7 +327,6 @@ void Game::updateDFS()
 
 	this->updatePath();
 	algActive = true;
-	std::cout << "DFS updated" << std::endl;
 }
 
 void Game::updateDijkstra()
@@ -373,7 +369,6 @@ void Game::updateDijkstra()
 	nodePriorityQueue.clear();
 	this->updatePath();
 	algActive = true;
-	std::cout << "Dijkstra updated" << std::endl;
 }
 
 void Game::updateAStar()
@@ -419,7 +414,6 @@ void Game::updateAStar()
 	nodePriorityQueue.clear();
 	this->updatePath();
 	algActive = true;
-	std::cout << "A* updated" << std::endl;
 }
 
 void Game::updatePath()

@@ -31,8 +31,6 @@ private:
 	sf::Color wallColor = sf::Color::Blue;
 	sf::Color pathColor = sf::Color::Cyan;
 
-	// Private functions
-	
 public:
 	Node();
 	Node(float x, float y);
@@ -49,11 +47,9 @@ public:
 	float distanceCost;
 	float x;
 	float y;
-	bool startAlgo;
 	short unsigned nodeState;
 
 	// Accessors
-	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
 	const bool checkVisited() const;
 	const bool isStart() const;

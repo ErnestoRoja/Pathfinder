@@ -38,11 +38,6 @@ Button::~Button()
 
 }
 
-const sf::FloatRect Button::getBounds() const
-{
-	return this->button.getGlobalBounds();
-}
-
 const bool Button::isPressed() const
 {
 	if (this->buttonState == BTN_ACTIVE)
@@ -73,7 +68,6 @@ void Button::assignFillColor()
 void Button::updateButtons(const sf::Vector2f mousePos)
 {
 	this->buttonState = BTN_IDLE;
-	// Hover
 
 	if (this->button.getGlobalBounds().contains(mousePos))
 	{

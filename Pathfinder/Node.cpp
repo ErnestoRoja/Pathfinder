@@ -37,11 +37,6 @@ Node::~Node()
 
 }
 
-const sf::FloatRect Node::getBounds() const
-{
-	return this->node.getGlobalBounds();
-}
-
 const bool Node::isPressed() const
 {
 	if (this->nodeState == NODE_ACTIVE_LEFT || this->nodeState == NODE_ACTIVE_RIGHT)
@@ -84,21 +79,18 @@ void Node::resetNodes(const sf::Vector2f mousePos)
 			this->nodeState = NODE_IDLE;
 			CURRENT_LEFT_ACTIVE = 0;
 			this->setStart = false;
-			std::cout << "Left active reset: " << CURRENT_LEFT_ACTIVE << std::endl;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_RIGHT)
 		{
 			this->nodeState = NODE_IDLE;
 			CURRENT_RIGHT_ACTIVE = 0;
 			this->setEnd = false;
-			std::cout << "Right active reset: " << CURRENT_RIGHT_ACTIVE << std::endl;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_SHIFT)
 		{
 			this->nodeState = NODE_IDLE;
 			CURRENT_WALL_ACTIVE--;
 			this->isWall = false;
-			std::cout << "Wall count reset: " << CURRENT_WALL_ACTIVE << std::endl;
 		}
 	}
 }
@@ -113,7 +105,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 			this->isWall = true;
 			this->nodeState = NODE_ACTIVE_SHIFT;
 			CURRENT_WALL_ACTIVE++;
-			std::cout << "Wall Count: " << CURRENT_WALL_ACTIVE << std::endl;
 		}
 	}
 	if ((CURRENT_LEFT_ACTIVE < 1))
@@ -126,7 +117,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 				this->nodeState = NODE_ACTIVE_LEFT;
 				this->setStart = true;
 				CURRENT_LEFT_ACTIVE++;
-				std::cout << "Left active: " << CURRENT_LEFT_ACTIVE << std::endl;
 			}
 		}
 	}
@@ -140,7 +130,6 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 				this->nodeState = NODE_ACTIVE_RIGHT;
 				this->setEnd = true;
 				CURRENT_RIGHT_ACTIVE++;
-				std::cout << "Right active: " << CURRENT_RIGHT_ACTIVE << std::endl;
 			}
 		}
 	}
