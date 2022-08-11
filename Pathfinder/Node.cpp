@@ -73,7 +73,6 @@ void Node::resetNodes(const sf::Vector2f mousePos)
 {
 	if (this->node.getGlobalBounds().contains(mousePos))
 	{
-		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && this->nodeState == NODE_ACTIVE_LEFT)
 		{
 			this->nodeState = NODE_IDLE;
@@ -102,8 +101,8 @@ void Node::updateNodes(const sf::Vector2f mousePos)
 		// Shift Left-clicked (sets a wall)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->isWall == false && this->setStart == false && this->setEnd == false)
 		{
-			this->isWall = true;
 			this->nodeState = NODE_ACTIVE_SHIFT;
+			this->isWall = true;
 			CURRENT_WALL_ACTIVE++;
 		}
 	}
@@ -190,19 +189,19 @@ void Node::assignFillColor()
 void Node::colorVisitedNode()
 {
 	if (this->isStart() == true)
-		this->node.setFillColor(sf::Color::Green);
+		this->node.setFillColor(activeColorLeft);
 	else if (this->isEnd() == true)
-		this->node.setFillColor(sf::Color::Red);
+		this->node.setFillColor(activeColorRight);
 	else
-		this->node.setFillColor(sf::Color::Cyan);
+		this->node.setFillColor(pathColor);
 }
 
 void Node::colorPathNode()
 {
 	if (this->isEnd() == true)
-		this->node.setFillColor(sf::Color::Red);
+		this->node.setFillColor(activeColorRight);
 	else 
-		this->node.setFillColor(sf::Color::Black);
+		this->node.setFillColor(sf::Color(244, 164, 96, 255));
 }
 
 void Node::update(const sf::Vector2f mousePos)

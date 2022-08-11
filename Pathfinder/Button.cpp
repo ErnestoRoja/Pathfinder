@@ -11,7 +11,7 @@ Button::Button(float x, float y, float width, float height, std::string text,
 
 	this->buttonState = BTN_IDLE;
 
-	if (!this->font.loadFromFile("Fonts/Roboto-Regular.ttf"))
+	if (!this->font.loadFromFile("fonts/Roboto-Regular.ttf"))
 		std::cout << "ERROR:BUTTON:INITFONTS::COULD NOT LOAD FONT" << std::endl;
 
 	this->button.setPosition(sf::Vector2f(x, y));

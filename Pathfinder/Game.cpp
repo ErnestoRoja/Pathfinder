@@ -67,6 +67,12 @@ void Game::initGUI()
 	this->resetAllButton = new Button(2050.f, 578.f, 200.f, 70.f, "Reset All",
 		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
 
+	this->customButton1 = new Button(1820.f, 920.f, 200.f, 70.f, "Custom Maze 1",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->customButton2 = new Button(2050.f, 920.f, 200.f, 70.f, "Custom Maze 2",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
 }
 
 Game::Game()
@@ -94,6 +100,8 @@ Game::~Game()
 	delete this->AStarButton;
 	delete this->resetAlgButton;
 	delete this->resetAllButton;
+	delete this->customButton1;
+	delete this->customButton2;
 }
 
 void Game::run()
@@ -114,6 +122,36 @@ void Game::updateMousePositions()
 	this->mousePosView = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
+void Game::setCustomGrid(std::string filename)
+{
+	std::vector<int> testFileData;
+	std::ifstream file(filename);
+	char tempNumber;
+	int index = 0;
+
+	while (!file.eof())
+	{
+		file >> tempNumber;
+		testFileData.push_back(tempNumber);
+	}
+
+	for (auto* i : this->nodes)
+	{
+		if (testFileData.at(index) == 49)
+		{
+			i->nodeState = NODE_ACTIVE_SHIFT;
+			i->isWall = true;
+			CURRENT_WALL_ACTIVE++;
+		}
+		else
+		{
+			i->nodeState = NODE_IDLE;
+		}
+		i->assignFillColor();
+		index++;
+	}
+}
+
 void Game::update()
 {
 	this->updateMousePositions();
@@ -123,6 +161,8 @@ void Game::update()
 	this->AStarButton->update(this->mousePosView);
 	this->resetAlgButton->update(this->mousePosView);
 	this->resetAllButton->update(this->mousePosView);
+	this->customButton1->update(this->mousePosView);
+	this->customButton2->update(this->mousePosView);
 }
 
 void Game::updateNodeLocation()
@@ -140,49 +180,31 @@ void Game::updateNodes(char key)
 {
 	switch (key)
 	{
-	case 'A':  // Num1 (BFS)
+	case 'A':  // (BFS)
 		if (checkActive() == true)
 		{
 			this->updateBFS();
 		}
 		break;
-	case 'B':  // Num2 (DFS)
+	case 'B':  // (DFS)
 		if (checkActive() == true)
 		{
 			this->updateDFS();
 		}
 		break;
-	case 'C':  // Num3 (Dijkstra)
+	case 'C':  // (Dijkstra)
 		if (checkActive() == true)
 		{
 			this->updateDijkstra();
 		}
 		break;
-	case 'D':  // Num4 (A*)
+	case 'D':  // (A*)
 		if (checkActive() == true)
 		{
 			this->updateAStar();
 		}
 		break;
-	case 'L':   // Left Clicked
-		if (algActive == false)
-		{
-			for (auto* i : this->nodes)
-			{
-				i->update((sf::Vector2f)this->mousePosWindow);
-			}
-		}
-		break;
-	case 'R':   // Right Clicked
-		if (algActive == false)
-		{
-			for (auto* i : this->nodes)
-			{
-				i->update((sf::Vector2f)this->mousePosWindow);
-			}
-		}
-		break;
-	case 'S':    // Spacebar
+	case 'P':   // Left or Right Clicked
 		if (algActive == false)
 		{
 			for (auto* i : this->nodes)
@@ -208,6 +230,17 @@ void Game::updateNodes(char key)
 		}
 		algActive = false;
 		break;
+	case 'K': // Custom maze
+		for (auto* i : this->nodes)
+		{
+			i->completeReset();
+		}
+		if (activeMaze == "grid1")
+			this->setCustomGrid("grids/grid1.txt");
+		else
+			this->setCustomGrid("grids/grid2.txt");
+		algActive = false;
+		break;
 	default:
 		std::cout << "switch default" << std::endl;
 		break;
@@ -222,23 +255,11 @@ void Game::updatePollEvents()
 		if (ev.Event::type == sf::Event::Closed)
 			this->window->close();
 
-		if (ev.type == sf::Event::MouseButtonPressed)
+		if (ev.type == sf::Event::MouseButtonPressed || ev.type == sf::Event::KeyPressed)
 		{
-			if (ev.mouseButton.button == sf::Mouse::Left)
+			if (ev.mouseButton.button == sf::Mouse::Left || ev.mouseButton.button == sf::Mouse::Right || ev.key.code == sf::Keyboard::Space)
 			{
-				this->updateNodes('L');
-			}
-			else if (ev.mouseButton.button == sf::Mouse::Right)
-			{
-				this->updateNodes('R');
-			}
-		}
-		if (ev.type == sf::Event::KeyPressed)
-		{
-			if (ev.key.code == sf::Keyboard::Space)
-			{
-				this->updateNodes('S');
-				
+				this->updateNodes('P');
 			}
 		}
 		if (BFSButton->isPressed() == true)
@@ -264,6 +285,16 @@ void Game::updatePollEvents()
 		else if (resetAllButton->isPressed() == true)
 		{
 			this->updateNodes('M');
+		}
+		else if (customButton1->isPressed() == true)
+		{
+			activeMaze = "grid1";
+			this->updateNodes('K');
+		}
+		else if (customButton2->isPressed() == true)
+		{
+			activeMaze = "grid2";
+			this->updateNodes('K');
 		}
 	}
 }
@@ -456,6 +487,8 @@ void Game::render()
 	AStarButton->render(this->window);
 	resetAlgButton->render(this->window);
 	resetAllButton->render(this->window);
+	customButton1->render(this->window);
+	customButton2->render(this->window);
 
 	this->window->display();
 }

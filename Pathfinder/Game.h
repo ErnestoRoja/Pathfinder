@@ -7,6 +7,7 @@
 #include <math.h>
 #include <Windows.h>
 #include <ctime>
+#include <fstream>
 
 class Game : private Node, private Button
 {
@@ -14,13 +15,13 @@ private:
 	// Window
 	sf::RenderWindow* window;
 
-	// Resources
+	// Private resources
 	std::vector<Node*> nodes;
 	std::deque<Node*> nodeQueue;
 	std::list<Node*> nodePriorityQueue;
 	std::stack<Node*> nodeStack;
 
-	// Variables
+	// Private variables
 	const float screenWidth = 2300.0f;
 	const float screenHeight = 1000.0f;
 	const size_t columns_X = 36;
@@ -31,6 +32,7 @@ private:
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
 	bool algActive;
+	std::string activeMaze;
 
 	Button* tutorialButton;
 	Button* keybindsButton;
@@ -40,6 +42,8 @@ private:
 	Button* AStarButton;
 	Button* resetAlgButton;
 	Button* resetAllButton;
+	Button* customButton1;
+	Button* customButton2;
 
 	// Private functions
 	void initWindow();
@@ -53,20 +57,22 @@ public:
 
 	// Public functions
 	void run();
-
-	void updateMousePositions();
 	void update();
 	void updateNodes(char algorithm);
 	void updatePollEvents();
-	void updateNodeLocation();
 	void updateBFS();
 	void updateDFS();
 	void updateDijkstra();
 	void updateAStar();
 	void updatePath();
-
-	float calculateDistance(Node* firstNode, Node* secondNode);
-
 	void render();
+
+	// Modifiers
+	void updateNodeLocation();
+	void updateMousePositions();
+	void setCustomGrid(std::string filename);
+
+	// Accessors
+	float calculateDistance(Node* firstNode, Node* secondNode);
 };
 

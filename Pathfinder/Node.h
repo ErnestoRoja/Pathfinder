@@ -18,18 +18,19 @@ static int CURRENT_WALL_ACTIVE = 0;
 class Node
 {
 private:
-	bool setStart;
-	bool setEnd;
+	
 
-	// Resources
+	// Private variables
 	sf::RectangleShape node;
-
-	// Variables
 	sf::Color idleColor = sf::Color::White;
 	sf::Color activeColorLeft = sf::Color::Green;
 	sf::Color activeColorRight = sf::Color::Red;
-	sf::Color wallColor = sf::Color::Blue;
+	sf::Color wallColor = sf::Color::Black;
 	sf::Color pathColor = sf::Color::Cyan;
+
+	// Private functions
+	void initVariables(float x, float y);
+	void initShapes(float x, float y);
 
 public:
 	Node();
@@ -37,6 +38,8 @@ public:
 	virtual ~Node();
 
 	// Public variables
+	bool setStart;
+	bool setEnd;
 	const sf::Vector2f nodeSize = { 50, 50 };
 	std::vector<Node*> neighbors;
 	Node* parent;
@@ -49,12 +52,10 @@ public:
 	float y;
 	short unsigned nodeState;
 
-	// Accessors
-	const bool isPressed() const;
-	const bool checkVisited() const;
-	const bool isStart() const;
-	const bool isEnd() const;
-	const bool checkActive() const;
+	// Public functions
+	void update(const sf::Vector2f mousePos);
+
+	void render(sf::RenderTarget* target);
 
 	// Modifiers
 	void resetNodes(const sf::Vector2f mousePos);
@@ -65,11 +66,10 @@ public:
 	void colorVisitedNode();
 	void colorPathNode();
 
-	// Public functions
-	void update(const sf::Vector2f mousePos);
-
-	void initVariables(float x, float y);
-	void initShapes(float x, float y);
-
-	void render(sf::RenderTarget* target);
+	// Accessors
+	const bool isPressed() const;
+	const bool checkVisited() const;
+	const bool isStart() const;
+	const bool isEnd() const;
+	const bool checkActive() const;
 };
