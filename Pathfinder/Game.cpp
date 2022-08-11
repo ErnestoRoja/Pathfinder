@@ -48,6 +48,25 @@ void Game::initGUI()
 	this->keybindsButton = new Button(1820.f, 255.f, 460.f, 240.f,
 		"Key Binds: \n Set Start - Left Click \n Set End - Right Click \n Set Wall - Left-shift Left Click \n Reset Specific Node - Spacebar",
 		sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255), sf::Color(9, 211, 230, 255));
+
+	this->BFSButton = new Button(1820.f, 500.f, 200.f, 70.f, "Visualize BFS",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->DFSButton = new Button(1820.f, 578.f, 200.f, 70.f, "Visualize DFS",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->DijkstraButton = new Button(1820.f, 656.f, 200.f, 70.f, "Visualize Dijkstra",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->AStarButton = new Button(1820.f, 734.f, 200.f, 70.f, "Visualize A*",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->resetAlgButton = new Button(2050.f, 500.f, 200.f, 70.f, "Reset Algorithm",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
+	this->resetAllButton = new Button(2050.f, 578.f, 200.f, 70.f, "Reset All",
+		sf::Color(0, 71, 171, 200), sf::Color(0, 71, 171, 255), sf::Color(8, 24, 168, 255));
+
 }
 
 Game::Game()
@@ -69,6 +88,12 @@ Game::~Game()
 
 	delete this->tutorialButton;
 	delete this->keybindsButton;
+	delete this->BFSButton;
+	delete this->DFSButton;
+	delete this->DijkstraButton;
+	delete this->AStarButton;
+	delete this->resetAlgButton;
+	delete this->resetAllButton;
 }
 
 void Game::run()
@@ -86,11 +111,18 @@ void Game::run()
 void Game::updateMousePositions()
 {
 	this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+	this->mousePosView = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
 void Game::update()
 {
 	this->updateMousePositions();
+	this->BFSButton->update(this->mousePosView);
+	this->DFSButton->update(this->mousePosView);
+	this->DijkstraButton->update(this->mousePosView);
+	this->AStarButton->update(this->mousePosView);
+	this->resetAlgButton->update(this->mousePosView);
+	this->resetAllButton->update(this->mousePosView);
 }
 
 void Game::updateNodeLocation()
@@ -210,35 +242,30 @@ void Game::updatePollEvents()
 				this->updateNodes('S');
 				
 			}
-			else if (ev.key.code == sf::Keyboard::M)
-			{
-				this->updateNodes('M');
-				
-			}
-			else if (ev.key.code == sf::Keyboard::N)
-			{
-				this->updateNodes('N');
-				
-			}
-			else if (ev.key.code == sf::Keyboard::Num1)
-			{
-				this->updateNodes('A');
-			
-			}
-			else if (ev.key.code == sf::Keyboard::Num2)
-			{
-				this->updateNodes('B');
-				
-			}
-			else if (ev.key.code == sf::Keyboard::Num3)
-			{
-				this->updateNodes('C');
-				
-			}
-			else if (ev.key.code == sf::Keyboard::Num4)
-			{
-				this->updateNodes('D');
-			}
+		}
+		if (BFSButton->isPressed() == true)
+		{
+			this->updateNodes('A');
+		}
+		else if (DFSButton->isPressed() == true)
+		{
+			this->updateNodes('B');
+		} 
+		else if (DijkstraButton->isPressed() == true)
+		{
+			this->updateNodes('C');
+		}
+		else if (AStarButton->isPressed() == true)
+		{
+			this->updateNodes('D');
+		}
+		else if (resetAlgButton->isPressed() == true)
+		{
+			this->updateNodes('N');
+		}
+		else if (resetAllButton->isPressed() == true)
+		{
+			this->updateNodes('M');
 		}
 	}
 }
@@ -420,7 +447,7 @@ float Game::calculateDistance(Node* targetNode, Node* referenceNode)
 
 void Game::render()
 {
-	this->window->clear();
+	this->window->clear(sf::Color(169, 169, 169, 255));
 
 	for (auto* node : this->nodes)
 	{
@@ -429,6 +456,12 @@ void Game::render()
 
 	tutorialButton->render(this->window);
 	keybindsButton->render(this->window);
+	BFSButton->render(this->window);
+	DFSButton->render(this->window);
+	DijkstraButton->render(this->window);
+	AStarButton->render(this->window);
+	resetAlgButton->render(this->window);
+	resetAllButton->render(this->window);
 
 	this->window->display();
 }

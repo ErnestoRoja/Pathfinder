@@ -29,10 +29,17 @@ private:
 	Node* startingNode;
 	Node* endingNode;
 	sf::Vector2i mousePosWindow;
+	sf::Vector2f mousePosView;
 	bool algActive;
 
 	Button* tutorialButton;
 	Button* keybindsButton;
+	Button* BFSButton;
+	Button* DFSButton;
+	Button* DijkstraButton;
+	Button* AStarButton;
+	Button* resetAlgButton;
+	Button* resetAllButton;
 
 	// Private functions
 	void initWindow();

@@ -14,28 +14,33 @@ Button::Button(float x, float y, float width, float height, std::string text,
 	if (!this->font.loadFromFile("Fonts/Roboto-Regular.ttf"))
 		std::cout << "ERROR:BUTTON:INITFONTS::COULD NOT LOAD FONT" << std::endl;
 
-	this->shape.setPosition(sf::Vector2f(x, y));
-	this->shape.setSize(sf::Vector2f(width, height));
+	this->button.setPosition(sf::Vector2f(x, y));
+	this->button.setSize(sf::Vector2f(width, height));
 
 	this->text.setFont(this->font);
 	this->text.setString(text);
 	this->text.setFillColor(sf::Color::Black);
-	this->text.setCharacterSize(32);
+	this->text.setCharacterSize(24);
 	this->text.setPosition(
-		this->shape.getPosition().x + (this->shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		this->shape.getPosition().y + (this->shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
+		this->button.getPosition().x + (this->button.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+		this->button.getPosition().y + (this->button.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
 	);
 
 	this->idleColor = idleColor;
 	this->hoverColor = hoverColor;
 	this->activeColor = activeColor;
 
-	this->shape.setFillColor(this->idleColor);
+	this->button.setFillColor(this->idleColor);
 }
 
 Button::~Button()
 {
 
+}
+
+const sf::FloatRect Button::getBounds() const
+{
+	return this->button.getGlobalBounds();
 }
 
 const bool Button::isPressed() const
@@ -51,27 +56,26 @@ void Button::assignFillColor()
 	switch (this->buttonState)
 	{
 	case BTN_IDLE:
-		this->shape.setFillColor(this->idleColor);
+		this->button.setFillColor(this->idleColor);
 		break;
 	case BTN_HOVER:
-		this->shape.setFillColor(this->hoverColor);
+		this->button.setFillColor(this->hoverColor);
 		break;
 	case BTN_ACTIVE:
-		this->shape.setFillColor(this->activeColor);
+		this->button.setFillColor(this->activeColor);
 		break;
 	default:
-		this->shape.setFillColor(sf::Color::Red);
+		this->button.setFillColor(sf::Color::Red);
 		break;
 	}
 }
 
-void Button::update(const sf::Vector2f mousePos)
+void Button::updateButtons(const sf::Vector2f mousePos)
 {
-
 	this->buttonState = BTN_IDLE;
 	// Hover
-	
-	if (this->shape.getGlobalBounds().contains(mousePos))
+
+	if (this->button.getGlobalBounds().contains(mousePos))
 	{
 		this->buttonState = BTN_HOVER;
 
@@ -80,12 +84,16 @@ void Button::update(const sf::Vector2f mousePos)
 			this->buttonState = BTN_ACTIVE;
 		}
 	}
+}
 
+void Button::update(const sf::Vector2f mousePos)
+{
+	this->updateButtons(mousePos);
 	this->assignFillColor();
 }
 
 void Button::render(sf::RenderTarget* target)
 {
-	target->draw(this->shape);
+	target->draw(this->button);
 	target->draw(this->text);
 }

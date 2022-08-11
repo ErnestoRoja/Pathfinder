@@ -10,7 +10,7 @@ class Button
 private:
 	short unsigned buttonState;
 
-	sf::RectangleShape shape;
+	sf::RectangleShape button;
 	sf::Font font;
 	sf::Text text;
 
@@ -31,10 +31,12 @@ public:
 	// Public Variables
 	
 	// Accessors
+	const sf::FloatRect getBounds() const;
 	const bool isPressed() const;
 
 	// Public functions
 	void assignFillColor();
+	void updateButtons(const sf::Vector2f mousePos);
 	void update(const sf::Vector2f mousePos);
 	void render(sf::RenderTarget* target);
 };
