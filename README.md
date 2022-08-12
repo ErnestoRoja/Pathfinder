@@ -24,6 +24,11 @@
 
 - GUI that contains a tutorial and key binds section.
 
-### Build instructions (MUST HAVE SFML INSTALLED AND WORKING)
+### Build instructions (OPTION 1)
+
+- Click the green "Code" button and download ZIP.
+- Run "main.exe" found in the Pathfinder folder.
+
+### Build instructions (OPTION 2) (MUST HAVE SFML INSTALLED AND WORKING)
 
 - Clone and run on a C++ compiler (Version 14.31 was used for this project)
