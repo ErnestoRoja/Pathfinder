@@ -27,6 +27,7 @@
 ### Build instructions (OPTION 1)
 
 - Click the green "Code" button and download ZIP.
+- Extract the downloaded ZIP file into a new folder.
 - Run "main.exe" found in the Pathfinder folder.
 
 ### Build instructions (OPTION 2) (MUST HAVE SFML INSTALLED AND WORKING)
